@@ -15,6 +15,11 @@
 @import "./animation.css";
 
 @layer base {
+  * {
+    @apply text-black;
+    font-family: 'Oswald', sans-serif;
+  }
+
   *:focus-visible {
     outline: none !important;
     box-shadow: none !important;

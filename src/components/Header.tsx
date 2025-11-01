@@ -27,7 +27,7 @@ export default function Header({ onPageTitleChange }: HeaderProps) {
   const pathname = usePathname();
   const [hoveredMenu, setHoveredMenu] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(true);
-  const [isBlur, setBlur] = useState(false);
+  const [isBlur, setBlur] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
   const isActive = (href: string) => {
@@ -40,21 +40,18 @@ export default function Header({ onPageTitleChange }: HeaderProps) {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-
-      // Add blur class when scroll > 700
-      if (currentScrollY > 700) {
-        setBlur(true);
-      } else {
-        setBlur(false);
-      }
+      const currentScrollX = window.scrollX;
 
       if (currentScrollY > lastScrollY && currentScrollY > 710) {
+        setBlur(true)
         setIsVisible(false); // Ẩn header
       }  
       else if (currentScrollY < lastScrollY) {
         // show header
         setIsVisible(true); 
+        setBlur(false)
       }
+
 
       setLastScrollY(currentScrollY);
     };
@@ -99,7 +96,7 @@ export default function Header({ onPageTitleChange }: HeaderProps) {
   }, [pathname, onPageTitleChange, menuItems]);
 
   return (
-    <header className={`header ${isVisible ? 'translate-y-0' : '-translate-y-[100px]'} ${isBlur ? 'header--blur' : ''}`}>
+    <header className={`header ${isVisible ? 'translate-y-0' : '-translate-y-[100px]'}`}>
       <div className="container-fluid px-10">
         <div className="flex items-center justify-between">
           <Link  href="/" className="logo"> 

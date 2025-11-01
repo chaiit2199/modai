@@ -5,6 +5,7 @@ import Loading from "@/components/Loading";
 import { useDevice } from '@/context/DeviceContext';
 import PageTitle from "@/components/PageTitle";
 import Tabs from "@/components/Tabs";
+import Metadata from "@/components/Metadata";
 
 const tabMenu = [
   {
@@ -65,6 +66,12 @@ export default function Home() {
   if (isMobile == undefined) return; 
   return (
     <div>
+      <Metadata 
+        title="Cửa hàng"
+        description="Mua sắm các sản phẩm công nghệ chất lượng cao tại cửa hàng Săn Sell là ghiền. Smartphones, tablets, laptops và phụ kiện với giá tốt nhất."
+        keywords="cửa hàng, mua sắm, điện thoại, smartphone, tablet, laptop, công nghệ, phụ kiện, Săn Sell là ghiền"
+        canonical="/shop"
+      />
       <PageTitle />
       <div className="container py-8 mt-8">
         <h2 className="text-3xl font-bold text-center mb-8">New Arrivals</h2>

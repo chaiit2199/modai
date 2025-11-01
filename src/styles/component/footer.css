@@ -1,0 +1,13 @@
+.footer-body {
+    padding-top: 90px;
+    padding-bottom: 56px;
+    position: relative;
+    z-index: 4;
+}
+
+
+.footer-bottom {
+    position: relative;
+    z-index: 5;
+}
+ 

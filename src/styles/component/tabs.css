@@ -1,0 +1,18 @@
+.tabs {
+    @apply w-full;
+    .menu-tabs {
+        @apply relative flex;
+    }
+
+    .menu-tabs--item {
+        @apply relative mr-4 text-sm transition-colors duration-200 text-black uppercase font-semibold;
+
+        &:last-child {
+            @apply mr-0;
+        }
+
+        &.active {
+            @apply border-black dark:border-white;
+        }
+    }
+}

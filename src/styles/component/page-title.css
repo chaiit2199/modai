@@ -1,0 +1,57 @@
+.page-title {
+    @apply h-[750px] flex relative;
+
+    .overlay {
+        @apply absolute inset-0 bg-black opacity-30 z-10 pointer-events-none;
+    }
+
+    .slide-item--title {
+        @apply relative text-black text-4xl uppercase font-bold mb-4;
+    }
+    
+    .slide-item--sub-title {
+        @apply text-black text-xl mb-6;
+    }
+
+    .slide-item--content {
+        @apply absolute text-left max-w-7xl z-10 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2;
+    }
+
+    /* animation slider */
+    .slide-item--title,
+    .slide-item--sub-title, 
+    .slide-item--action {
+        transform: translateY(200px);
+        opacity: 0;
+    } 
+
+    .swiper-slide-active .slide-item--title,
+    .swiper-slide-active .slide-item--sub-title,
+    .swiper-slide-active .slide-item--action {
+        opacity           : 1;
+        visibility        : visible;
+        -webkit-transition: transform 800ms ease, opacity 800ms ease;
+        -moz-transition   : transform 800ms ease, opacity 800ms ease;
+        -ms-transition    : transform 800ms ease, opacity 800ms ease;
+        -o-transition     : transform 800ms ease, opacity 800ms ease;
+        transition        : transform 800ms ease, opacity 800ms ease;
+        transition-delay  : 1000ms;
+    } 
+
+    .swiper-slide-active .slide-item--title,
+    .swiper-slide-active .slide-item--sub-title,
+    .swiper-slide-active .slide-item--action {
+        transform: translateY(0px);
+    } 
+    .swiper-slide-active .slide-item--title {
+        transition-delay: 400ms;
+    }
+
+    .swiper-slide-active .slide-item--sub-title {
+        transition-delay: 500ms;
+    }
+
+    .swiper-slide-active .slide-item--action {
+        transition-delay: 600ms;
+    }
+}

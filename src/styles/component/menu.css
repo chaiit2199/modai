@@ -1,0 +1,13 @@
+.menu-item {
+    @apply transition-colors inline-flex items-center gap-1 font-semibold uppercase pb-1;
+    .menu-item {
+
+        .active {
+            @apply text-black dark:text-white font-medium border-b-2 border-black dark:border-white;
+        }
+
+        .inactive {
+            @apply text-zinc-600 dark:text-zinc-400 hover:text-black dark:hover:text-white;
+        }
+    }
+}

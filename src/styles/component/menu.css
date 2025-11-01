@@ -1,5 +1,5 @@
 .menu-item {
-    @apply transition-colors inline-flex items-center gap-1 font-semibold uppercase text-white;
+    @apply transition-colors inline-flex items-center gap-1 font-semibold uppercase ;
     .active {
         @apply font-medium border-b-2 border-white;
     } 

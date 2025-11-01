@@ -5,14 +5,10 @@ import '@/styles/app.css';
 import { DeviceProvider } from '@/context/DeviceContext';
 
 export default function App({ Component, pageProps }: AppProps) {
-  const handlePageTitleChange = (title: string) => {
-    document.title = title;
-  };
-
   return (
     <DeviceProvider>
       <div className="main-container">
-        <Header onPageTitleChange={handlePageTitleChange} />
+        <Header/>
         <Component {...pageProps} />
         <Footer />
       </div>

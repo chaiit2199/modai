@@ -6,7 +6,7 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <title>Săn Sell là ghiền</title>
-        <link rel="icon" type="image/svg" href="/icons/favicon.svg"></link>
+        <link rel="icon" type="image/svg" href="/icons/favicon.png"></link>
       </Head>
       <body className="antialiased">
         <Main />

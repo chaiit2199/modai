@@ -1,8 +1,19 @@
 "use client"
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import SocialShare from '@/components/SocialShare';
 
 export default function Footer() {
+  const [currentUrl, setCurrentUrl] = useState('');
+
+  // Get current URL for sharing
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCurrentUrl(window.location.href);
+    }
+  }, []);
+
   return (
     <footer className="w-full bg-background3 mt-12">  
       <div className="container py-16 flex flex-col gap-6">
@@ -14,6 +25,10 @@ export default function Footer() {
 
             <div className="mt-10">
               MODAI là ứng dụng bóng đá cần phải có.
+            </div>
+
+            <div className="mt-6">
+              <SocialShare url={currentUrl} />
             </div>
           </div>
         </div>

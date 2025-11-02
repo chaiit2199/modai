@@ -1,20 +1,20 @@
 .page-title {
-    @apply h-[700px] flex relative;
+    @apply h-[280px] flex relative rounded-2xl overflow-hidden mb-5;
 
     .overlay {
-        @apply absolute inset-0 bg-black opacity-30 z-10 pointer-events-none;
+        @apply absolute inset-0 bg-black opacity-10 z-10 pointer-events-none;
     }
 
     .slide-item--title {
-        @apply relative text-white text-4xl uppercase font-bold mb-4;
+        @apply relative text-white text-2xl uppercase font-bold mb-4;
     }
     
     .slide-item--sub-title {
-        @apply text-white text-xl mb-6;
+        @apply text-white text-base mb-6;
     }
 
     .slide-item--content {
-        @apply absolute text-left max-w-7xl z-10 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2;
+        @apply absolute text-left max-w-7xl z-10 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 pr-[150px];
     }
 
     .slide-item--backgroup {
@@ -62,5 +62,14 @@
 
     .swiper-slide-active .slide-item--action {
         transition-delay: 600ms;
+    }
+
+    .swiper-slide {
+        opacity: 0 !important;
+        transition: opacity 1s ease-in-out !important;
+    }
+
+    .swiper-slide-active {
+        opacity: 1 !important;
     }
 }

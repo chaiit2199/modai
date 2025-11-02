@@ -1,0 +1,45 @@
+.post {
+    &.style1 {
+        .post-image {
+            @apply w-full rounded-xl overflow-hidden mb-3;
+        }
+
+        .post-title {
+            @apply font-semibold mb-2 text-lg
+;
+            -webkit-box-orient: vertical;
+            display: -webkit-box;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            -webkit-line-clamp: 2;
+            max-width: 100%;
+        }
+
+        .post-date {
+            @apply text-sm text-[#808080];
+        }
+    }
+
+    &.style2 {
+        @apply flex gap-4 items-center;
+        .post-image {
+            @apply w-full rounded-xl overflow-hidden;
+        }
+
+        .post-content {
+            .post-title {
+                @apply font-semibold mb-2 text-lg;
+                -webkit-box-orient: vertical;
+                display: -webkit-box;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                -webkit-line-clamp: 2;
+                max-width: 100%;
+            }
+
+            .post-date {
+                @apply text-sm text-[#808080];
+            }
+        }
+    }
+}

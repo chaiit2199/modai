@@ -1,18 +1,33 @@
 .tabs {
     @apply w-full;
     .menu-tabs {
-        @apply relative flex;
+        @apply relative flex flex-wrap;
     }
 
     .menu-tabs--item {
-        @apply relative mr-4 text-sm transition-colors duration-200 text-black uppercase font-semibold;
-
+        @apply relative mr-4 text-sm transition-colors duration-200 font-bold leading-[2] cursor-pointer;
         &:last-child {
             @apply mr-0;
         }
 
         &.active {
-            @apply border-black dark:border-white;
+            @apply text-active;
+        }
+    }
+
+    .menu-tabs--style-1 {
+        .menu-tabs--item {
+            @apply border border-transparent  bg-background2 px-4 py-2 rounded-xl overflow-hidden;
+
+            &.active {
+                @apply border-active;
+            }
+        }
+    }
+
+    .menu-tabs--style-2 {
+        .menu-tabs--item {
+            @apply uppercase;
         }
     }
 }

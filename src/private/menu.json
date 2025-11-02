@@ -2,18 +2,18 @@
   "menuItems": [
     {
       "id": 1,
-      "label": "Home",
+      "label": "Trang chủ",
       "href": "/"
     },
     {
       "id": 2,
-      "label": "Shop",
-      "href": "/shop"
+      "label": "Tin tức",
+      "href": "/news"
     },
     {
       "id": 3,
-      "label": "Services",
-      "href": "/services",
+      "label": "Về chúng tôi",
+      "href": "/about",
       "submenu": [
         {
           "id": 31,
@@ -31,33 +31,6 @@
           "href": "/services/consulting"
         }
       ]
-    },
-    {
-      "id": 4,
-      "label": "Blog",
-      "href": "/blog",
-      "submenu": [
-        {
-          "id": 41,
-          "label": "Technology",
-          "href": "/blog/technology"
-        },
-        {
-          "id": 42,
-          "label": "Design",
-          "href": "/blog/design"
-        },
-        {
-          "id": 43,
-          "label": "Business",
-          "href": "/blog/business"
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "label": "Contact",
-      "href": "/contact"
     }
   ]
 }

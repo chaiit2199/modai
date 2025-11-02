@@ -12,10 +12,10 @@ interface MetadataProps {
 }
 
 const defaultMetadata = {
-  siteName: 'Săn Sell là ghiền',
-  defaultTitle: 'Săn Sell là ghiền',
-  defaultDescription: 'Khám phá các sản phẩm công nghệ mới nhất với giá tốt nhất tại Săn Sell là ghiền. Smartphones, tablets, laptops và nhiều hơn nữa.',
-  defaultKeywords: 'điện thoại, smartphone, tablet, laptop, công nghệ, mua sắm online, Săn Sell là ghiền',
+  siteName: 'Tin Bóng Đá Mới Nhất Hôm Nay – Cập Nhật Kết Quả & Bảng Xếp Hạng',
+  defaultTitle: 'Tin Bóng Đá Mới Nhất Hôm Nay – Cập Nhật Kết Quả & Bảng Xếp Hạng',
+  defaultDescription: 'Cập nhật tin bóng đá mới nhất hôm nay: kết quả trận đấu, bảng xếp hạng, tin chuyển nhượng, nhận định trận đấu và tất cả thông tin nóng hổi về bóng đá Việt Nam và thế giới.Xem kết quả trận đấu Manchester United vs Liverpool hôm nay. Thống kê, highlight, bàn thắng và phân tích trận đấu mới nhất từ chuyên gia bóng đá. Tổng hợp tin chuyển nhượng bóng đá mùa đông 2025: cầu thủ mới, hợp đồng, tin đồn chuyển nhượng từ các CLB hàng đầu châu Âu và Việt Nam. Nhận định chuyên sâu trận đấu Chelsea vs Arsenal: dự đoán tỷ số, đội hình dự kiến, chiến thuật và những điểm nóng trước trận.Cập nhật tin tức bóng đá Việt Nam mới nhất: kết quả V.League, lịch thi đấu, cầu thủ nổi bật và các thông tin nóng về đội tuyển quốc gia.',
+  defaultKeywords: 'tin bóng đá, kết quả bóng đá, bảng xếp hạng, chuyển nhượng, nhận định, phân tích, bóng đá Việt Nam, bóng đá thế giới',
   defaultOgImage: '/images/banner/banner-1.jpg',
   siteUrl: 'https://modai.com', // Update với domain thực tế của bạn
 };

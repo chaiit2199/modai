@@ -17,6 +17,10 @@ interface TabsProps {
 
 export default function Tabs({ tabs, defaultTab, menuStyle, switchTab }: TabsProps) {
   const [activeTab, setActiveTab] = useState(defaultTab || tabs[0].id);
+  menuStyle = menuStyle === undefined ? "style-1" : menuStyle;
+
+  console.log(menuStyle, menuStyle === undefined);
+  
 
   // callback switchTab change activeTab
   useEffect(() => {
@@ -25,18 +29,19 @@ export default function Tabs({ tabs, defaultTab, menuStyle, switchTab }: TabsPro
 
   return (
     <div className="tabs"> 
-        <div className={`menu-tabs ${menuStyle}`}>
+        <div className={`menu-tabs menu-tabs--${menuStyle}`}>
             {tabs.map((tab) => (
                 <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`menu-tabs--item  ${activeTab === tab.id ? "active" : ""}`}>
-                    {tab.label}
-                    {activeTab === tab.id && (
-                    <motion.div
-                        layoutId="underline"
-                        className="absolute left-0 right-0 bottom-0 h-[2px] bg-black rounded-full"
-                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                    />
+                    {tab.label} 
+                    {(activeTab === tab.id && menuStyle == "style-2") && (
+                      <motion.div
+                          layoutId="underline"
+                          className="absolute left-0 right-0 bottom-0 h-[2px] bg-active rounded-full"
+                          transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                      />
                     )}
                 </button>
+                
             ))}
         </div>
     </div>

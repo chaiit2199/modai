@@ -5,6 +5,11 @@ import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import menuData from '@/private/menu.json';
 
+interface ShareButtonProps {
+  url: string;
+  className?: string;
+}
+
 interface SubMenuItem {
   id: number;
   label: string;
@@ -17,7 +22,42 @@ interface MenuItem {
   href: string;
   submenu?: SubMenuItem[];
 }
- 
+
+// Facebook Share Component
+function FacebookShareButton({ url, className = '' }: ShareButtonProps) {
+  const handleShare = () => {
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+    window.open(shareUrl, 'facebook-share-dialog', 'width=626,height=436');
+  };
+
+  return (
+    <button
+      onClick={handleShare}
+      className={`hover:opacity-80 transition-opacity cursor-pointer ${className}`}
+      aria-label="Chia sẻ lên Facebook"
+    >
+      <img alt="Facebook" loading="lazy" width="20" height="20" src="/icons/facebook.svg" />
+    </button>
+  );
+}
+
+// LinkedIn Share Component
+function LinkedInShareButton({ url, className = '' }: ShareButtonProps) {
+  const handleShare = () => {
+    const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+    window.open(shareUrl, 'linkedin-share-dialog', 'width=626,height=436');
+  };
+
+  return (
+    <button
+      onClick={handleShare}
+      className={`hover:opacity-80 transition-opacity cursor-pointer ${className}`}
+      aria-label="Chia sẻ lên LinkedIn"
+    >
+      <img alt="LinkedIn" loading="lazy" width="20" height="20" src="/icons/LinkedIn.svg" />
+    </button>
+  );
+}
 
 export default function Header() {
   const menuItems: MenuItem[] = menuData.menuItems;
@@ -25,6 +65,14 @@ export default function Header() {
   const [hoveredMenu, setHoveredMenu] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [currentUrl, setCurrentUrl] = useState('');
+
+  // Get current URL for sharing
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCurrentUrl(window.location.href);
+    }
+  }, [pathname]);
 
   const isActive = (href: string) => {
     if (href === '/') {
@@ -142,8 +190,8 @@ export default function Header() {
             </ul>
 
             <div className="header-right">
-              <img alt="LinkedIn" loading="lazy" width="20" height="20" src="/icons/LinkedIn.svg"></img>
-              <img alt="facebook" loading="lazy" width="20" height="20" src="/icons/facebook.svg"></img> 
+              <LinkedInShareButton url={currentUrl} />
+              <FacebookShareButton url={currentUrl} /> 
 
               <button>
                 <svg

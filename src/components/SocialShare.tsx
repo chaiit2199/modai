@@ -18,7 +18,7 @@ export function FacebookShareButton({ url, className = '' }: ShareButtonProps) {
       className={`hover:opacity-80 transition-opacity cursor-pointer ${className}`}
       aria-label="Chia sẻ lên Facebook"
     >
-      <img alt="Facebook" loading="lazy" width="20" height="20" src="/icons/facebook.svg" />
+      <img alt="Facebook" loading="lazy" width="18" height="18" src="/icons/facebook.svg" />
     </button>
   );
 }
@@ -36,7 +36,7 @@ export function LinkedInShareButton({ url, className = '' }: ShareButtonProps) {
       className={`hover:opacity-80 transition-opacity cursor-pointer ${className}`}
       aria-label="Chia sẻ lên LinkedIn"
     >
-      <img alt="LinkedIn" loading="lazy" width="20" height="20" src="/icons/LinkedIn.svg" />
+      <img alt="LinkedIn" loading="lazy" width="18" height="18" src="/icons/LinkedIn.svg" />
     </button>
   );
 }
@@ -57,8 +57,8 @@ export default function SocialShare({
 }: SocialShareProps) {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      {showLinkedIn && <LinkedInShareButton url={url} />}
       {showFacebook && <FacebookShareButton url={url} />}
+      {showLinkedIn && <LinkedInShareButton url={url} />}
     </div>
   );
 }

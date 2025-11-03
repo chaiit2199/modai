@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 type TabItem = {
   id: string;
   label: string;
+  icons?: string;
 };
 
 interface TabsProps {
@@ -31,7 +32,15 @@ export default function Tabs({ tabs, defaultTab, menuStyle, switchTab }: TabsPro
     <div className="tabs"> 
         <div className={`menu-tabs menu-tabs--${menuStyle}`}>
             {tabs.map((tab) => (
-                <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`menu-tabs--item  ${activeTab === tab.id ? "active" : ""}`}>
+                <button key={tab.id} onClick={() => setActiveTab(tab.id)} className={`menu-tabs--item flex items-center  ${activeTab === tab.id ? "active" : ""}`}>
+                    {tab.icons && (
+                      <img 
+                        src={tab.icons} 
+                        alt={`${tab.label} icon`} 
+                        // Thêm class để dễ dàng tùy chỉnh style cho icon (ví dụ: kích thước, margin)
+                        className="tab-icon mr-2 h-3 w-3" 
+                      />
+                    )}
                     {tab.label} 
                     {(activeTab === tab.id && menuStyle == "style-2") && (
                       <motion.div

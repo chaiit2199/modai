@@ -4,22 +4,32 @@ import { useDevice } from '@/context/DeviceContext';
 import PageTitle from "@/components/PageTitle";
 import MatchesComponent from "@/components/Matches/MatchesComponent";
 import RankingsComponent from "@/components/RankingsComponent";
+import FixturesLive from "@/components/Matches/FixturesLive";
 import Tabs from "@/components/Tabs";
 import Loading from "@/components/Loading";
-import Metadata from "@/components/Metadata";
+import Metadata from "@/components/Metadata"; 
+
 
 const tabMenu = [
   {
+    id: "match-live",
+    label: "Trận đang diễn ra",
+    icons: "/icons/live.svg"
+  },
+  {
     id: "match-schedule",
     label: "Lịch thi đấu",
+    icons: "/icons/lich.svg"
   },
   {
     id: "match-result",
     label: "Kết quả",
+    icons: "/icons/cup.svg"
   },
   {
     id: "rankings",
     label: "Bảng xếp hạng",
+    icons: "/icons/ranks.svg"
   }
   
 ];
@@ -82,7 +92,7 @@ export default function Home() {
       <div className="flex gap-6">
         <div className="main-content">
           <PageTitle />
-          <div className="bg-background3 rounded-2xl overflow-hidden p-4">
+          <div className="bg-background3 rounded-2xl overflow-hidden px-4 py-8">
               <div className="mb-4">
                 <Tabs tabs={tabMenu} switchTab={(id) => setActiveTab(id)} />
               </div>
@@ -90,6 +100,12 @@ export default function Home() {
               <div className="mb-4">
                 <Tabs tabs={tabTournament} switchTab={(id) => setActiveTabTournament(id)} menuStyle="style-2" />
               </div>
+
+              {activeTab === "match-live" && (
+                <div className="flex flex-col gap-6">
+                  <FixturesLive /> 
+                </div>
+              )}
 
               {activeTab === "match-schedule" && (
                 <div className="flex flex-col gap-6">

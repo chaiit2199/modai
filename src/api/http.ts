@@ -4,11 +4,11 @@ import { ENV } from '@/constants/';
 
 const http = axios.create({
   baseURL: ENV.API_BASE_URL,
+ 
 
   headers: {
-    // Accept: 'application/json',
-    // 'Content-Type': 'application/json',
-    // 'X-Requested-With': 'XMLHttpRequest',
+    'x-rapidapi-host': NEXT_PUBLIC_RAPIDAPI_HOST,
+    'x-rapidapi-key': NEXT_PUBLIC_RAPIDAPI_HOST,
   },
 });
 

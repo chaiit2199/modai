@@ -150,8 +150,8 @@ export default function Header() {
             </ul>
 
             <div className="header-right">
-              <LinkedInShareButton url={currentUrl} />
               <FacebookShareButton url={currentUrl} /> 
+              <LinkedInShareButton url={currentUrl} />
 
               <button>
                 <svg

@@ -3,10 +3,10 @@ import http from './http';
 
 const NEXT_PUBLIC_API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL 
  
-export async function getProduct(limit: number, skip: number) {
+export async function fetchFixturesLive(live: string) {
   try {  
-    const queryParams = new URLSearchParams({ limit: String(limit), skip: String(skip) }).toString();
-    const url = `${NEXT_PUBLIC_API_BASE_URL}${API.PRODUCT.LIST}?${queryParams}`;
+    const url = `${NEXT_PUBLIC_API_BASE_URL}${API.PRODUCT.fixtures}?live=${live}`;
+    console.log(url);
     const { data } = await http.get(url);
 
     return {

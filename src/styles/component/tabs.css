@@ -11,16 +11,16 @@
         }
 
         &.active {
-            @apply text-active;
+            /* @apply text-active; */
         }
     }
 
     .menu-tabs--style-1 {
         .menu-tabs--item {
-            @apply border border-transparent  bg-background2 px-4 py-2 rounded-xl overflow-hidden;
+            @apply bg-background2 px-4 py-2 rounded-xl overflow-hidden;
 
             &.active {
-                @apply border-active;
+                @apply bg-active;
             }
         }
     }

@@ -3,6 +3,8 @@
 import Link from 'next/link' 
 import { useState, useEffect } from "react";
 import { fetchFixturesLive } from "@/api/fetchData";
+import Matches from './Matches'; 
+
 
 export default function FixturesLive() {
 
@@ -19,25 +21,24 @@ export default function FixturesLive() {
         fetchFixtures();
     }, []); 
     console.log(fixturesData);
+    if(fixturesData.length === 0) return <p>Loading...</p>
 
   return (
+    <div>
+        {fixturesData && (
+        fixturesData.map((item) => (
+            <div className='matches' key={item.fixture.id}>
+                <h5 className='matches-title'> 
+                    <img src={item.league.logo} alt="item.league.logo" className="matches-title--icon"/>
+                    {item.league.country} - {item.league.name}
 
+                    <p className='ml-auto text-sm'>{item.league.round}</p>
+                </h5>
 
-    
-    <div className="matches-items">
-        <p className='font-bold w-[60px]'>13:40</p>
-        <ul className='matches-items--details'>
-          <li className='left justify-end'>
-            <strong>Udinese</strong>
-            <img src="/images/match/8600_xsmall.png" alt="National" className='w-6 h-6' />
-          </li>
-          <p className='font-bold text-center w-[60px]'>0 - 0</p>
-          <li className='right'>
-            <img src="/images/match/9789_xsmall.png" alt="National" className='w-6 h-6'/>
-            <strong>Udinese</strong>
-          </li>
-        </ul>
-        <p className='w-[60px]'></p>
+                <Matches isLive={true} data={item} key={`detais_${item.fixture.id}`} />
+            </div>
+        )))}
     </div>
+    
   )
 }

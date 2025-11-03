@@ -1,24 +1,30 @@
 'use client'
+import Link from 'next/link' 
+import { formatTimeToLocal } from '@/utils/dateUtils';
 
-import Link from 'next/link'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Autoplay } from "swiper/modules";
+interface MatchProps {
+  data: any; 
+  isLive: boolean; 
+}
 
-import "swiper/css";
-
-export default function Matches() {
+export default function Matches({ data, isLive }: MatchProps) {
+  
   return (
     <div className="matches-items">
-        <p className='font-bold w-[60px]'>13:40</p>
+        <p className='font-bold w-[60px] text-sm'>{isLive ? "live" : ""}</p>
         <ul className='matches-items--details'>
           <li className='left justify-end'>
-            <strong>Udinese</strong>
-            <img src="/images/match/8600_xsmall.png" alt="National" className='w-6 h-6' />
+            <strong>{data.teams.home.name}</strong>
+            <img src={data.teams.home.logo} alt="National" className='w-6 h-6' />
           </li>
-          <p className='font-bold text-center w-[60px]'>0 - 0</p>
+          {isLive ? 
+            <p className='font-bold text-center w-[60px] text-sm'>{data.goals?.home} - {data.goals?.away}</p> :
+            <p className='font-bold text-center w-[60px] text-sm'>{formatTimeToLocal(data.fixture.date)}</p> 
+          }
+          
           <li className='right'>
-            <img src="/images/match/9789_xsmall.png" alt="National" className='w-6 h-6'/>
-            <strong>Udinese</strong>
+            <img src={data.teams.away.logo} alt="National" className='w-6 h-6' />
+            <strong>{data.teams.away.name}</strong>
           </li>
         </ul>
         <p className='w-[60px]'></p>

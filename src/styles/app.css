@@ -7,7 +7,8 @@
   --color-background2: #2C2C2C;
   --color-background3: #222222;
   --color-active: #C3CC5A;
- 
+  --color-line: #F0F0F0;
+  --color-primary: #F5F5F5;
 }
 
 /* Desktop-first: định nghĩa breakpoints với max-width */

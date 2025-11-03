@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link' 
 import { formatTimeToLocal } from '@/utils/dateUtils';
+import { getMatchDisplay } from '@/utils/getMatchDisplay';
 
 interface MatchProps {
   data: any; 
@@ -8,10 +9,13 @@ interface MatchProps {
 }
 
 export default function Matches({ data, isLive }: MatchProps) {
-  
+  const { displayStatus, isLive: matchIsLive } = getMatchDisplay(data.fixture.status);
+
   return (
     <div className="matches-items">
-        <p className='font-bold w-[60px] text-sm'>{isLive ? "live" : ""}</p>
+        <div className='w-[100px]'>
+          <span className='font-bold bg-active text-white text-xs p-1 rounded-md'>{displayStatus}</span>
+        </div>
         <ul className='matches-items--details'>
           <li className='left justify-end'>
             <strong>{data.teams.home.name}</strong>

@@ -42,6 +42,30 @@ class Cache {
     return entry.data as T;
   }
 
+  // Get cache entry with metadata
+  getWithInfo<T>(key: string): { data: T; age: number; timestamp: number } | null {
+    const entry = this.cache.get(key);
+    
+    if (!entry) {
+      return null;
+    }
+
+    const now = Date.now();
+    const age = now - entry.timestamp;
+
+    // Check if entry has expired
+    if (age > entry.ttl) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return {
+      data: entry.data as T,
+      age,
+      timestamp: entry.timestamp,
+    };
+  }
+
   clear(key?: string): void {
     if (key) {
       this.cache.delete(key);
@@ -67,6 +91,29 @@ class Cache {
     }
 
     return true;
+  }
+
+  // Get cache entry info (timestamp and age) without returning data
+  getInfo(key: string): { timestamp: number; age: number; ttl: number } | null {
+    const entry = this.cache.get(key);
+    
+    if (!entry) {
+      return null;
+    }
+
+    const now = Date.now();
+    const age = now - entry.timestamp;
+
+    if (age > entry.ttl) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return {
+      timestamp: entry.timestamp,
+      age,
+      ttl: entry.ttl,
+    };
   }
 }
 

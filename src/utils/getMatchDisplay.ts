@@ -16,7 +16,7 @@ export function getMatchDisplay(statusObj: MatchStatus) {
       displayStatus = `${statusObj.elapsed}'`;
       break;
     case 'HT':
-      displayStatus = 'Nghỉ giữa hiệp';
+      displayStatus = 'Nghỉ H1';
       break;
     case '2H':
       displayStatus = `${statusObj.elapsed}'`;

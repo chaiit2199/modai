@@ -187,14 +187,15 @@ export default function Home({ fixturesLiveData }: HomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const cacheKey = 'fixtures-live-all';
+  const liveParam = "all"; // Có thể lấy từ query params nếu cần: context.query.live || "all"
+  const cacheKey = CACHE_KEYS.FIXTURES_LIVE(liveParam);
   
   // Check cache first
   let fixturesLiveData = cache.get<any[]>(cacheKey);
   
   if (!fixturesLiveData) {
     // Fetch from API if not in cache
-    const { success, data: response } = await fetchFixturesLive("all");
+    const { success, data: response } = await fetchFixturesLive(liveParam);
     
     if (success && response?.response) {
       fixturesLiveData = response.response;

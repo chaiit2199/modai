@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { GetServerSideProps } from "next";
 import { useDevice } from '@/context/DeviceContext';
 import PageTitle from "@/components/PageTitle";
 import MatchesComponent from "@/components/Matches/MatchesComponent";
@@ -7,7 +8,9 @@ import RankingsComponent from "@/components/RankingsComponent";
 import FixturesLive from "@/components/Matches/FixturesLive";
 import Tabs from "@/components/Tabs";
 import Loading from "@/components/Loading";
-import Metadata from "@/components/Metadata"; 
+import Metadata from "@/components/Metadata";
+import { fetchFixturesLive } from "@/api/fetchData";
+import { cache } from "@/utils/cache"; 
 
 
 const tabMenu = [
@@ -77,7 +80,11 @@ const tabTournament = [
   }
 ];
 
-export default function Home() {
+interface HomeProps {
+  fixturesLiveData: any[];
+}
+
+export default function Home({ fixturesLiveData }: HomeProps) {
   const {isMobile} = useDevice();
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(tabMenu[0].id);
@@ -103,7 +110,7 @@ export default function Home() {
 
               {activeTab === "match-live" && (
                 <div className="flex flex-col gap-6">
-                  <FixturesLive /> 
+                  <FixturesLive fixturesData={fixturesLiveData} /> 
                 </div>
               )}
 
@@ -176,4 +183,30 @@ export default function Home() {
       </div>
     </div>
   );
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const cacheKey = 'fixtures-live-all';
+  
+  // Check cache first
+  let fixturesLiveData = cache.get<any[]>(cacheKey);
+  
+  if (!fixturesLiveData) {
+    // Fetch from API if not in cache
+    const { success, data: response } = await fetchFixturesLive("all");
+    
+    if (success && response?.response) {
+      fixturesLiveData = response.response;
+      // Cache for 1 minute (60000 milliseconds)
+      cache.set(cacheKey, fixturesLiveData, 60000);
+    } else {
+      fixturesLiveData = [];
+    }
+  }
+
+  return {
+    props: {
+      fixturesLiveData: fixturesLiveData || [],
+    },
+  };
 }

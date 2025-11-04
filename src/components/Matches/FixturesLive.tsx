@@ -1,26 +1,11 @@
-'use client'
-
 import Link from 'next/link' 
-import { useState, useEffect } from "react";
-import { fetchFixturesLive } from "@/api/fetchData";
 import Matches from './Matches'; 
 
+interface FixturesLiveProps {
+    fixturesData: any[];
+}
 
-export default function FixturesLive() {
-
-    const [fixturesData, setFixturesData] = useState<any[]>([]);
- 
-    const fetchFixtures = async () => {
-        const { success, data: response } = await fetchFixturesLive("all");
-        if (success && response) {
-          setFixturesData(response.response); 
-        } 
-    }; 
-
-    useEffect(() => {
-        fetchFixtures();
-    }, []); 
-    console.log(fixturesData);
+export default function FixturesLive({ fixturesData }: FixturesLiveProps) {
     if(fixturesData.length === 0) return <p>Loading...</p>
 
   return (

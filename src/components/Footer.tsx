@@ -23,8 +23,7 @@ export default function Footer() {
               MODAI
             </Link>
 
-            <div className="mt-4 flex items-center">
-              <p className='font-medium text-lg mr-3'>Chia sẻ niềm đam mê: </p>
+            <div className="flex items-center mt-4">
               <SocialShare url={currentUrl} />
             </div>
           </div>

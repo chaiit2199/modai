@@ -1,4 +1,5 @@
 import { GetServerSideProps } from "next";
+import Link from 'next/link';
 import { useDevice } from '@/context/DeviceContext';
 import PageTitle from "@/components/PageTitle";
 import Metadata from "@/components/Metadata";
@@ -40,43 +41,24 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
       <Metadata/>
       
       <div className="flex gap-6">
-        <div className="main-content">
-          <PageTitle />
-          <div className="bg-background3 rounded-2xl overflow-hidden px-4 py-8">
-            {/* Data Source Indicator */}
-            <div className="mb-4 flex items-center gap-2 text-sm">
-              <span className={`px-2 py-1 rounded text-xs font-medium ${
-                dataSource === 'cache' 
-                  ? 'bg-green-100 text-green-800' 
-                  : 'bg-blue-100 text-blue-800'
-              }`}>
-                {dataSource === 'cache' ? '📦 From Cache' : '🌐 From API'}
-              </span>
-              {dataSource === 'cache' && cacheAge !== null && (
-                <span className="text-gray-500">
-                  (Cache age: {cacheAge}s)
-                </span>
-              )}
-              <span className="text-xs text-gray-400">
-                Fixture ID: {fixtureId}
-              </span>
-            </div>
-
-            {/* Match Info */}
+        <div className="main-content gap-6">
+          <div className="p-4 flex items-center gap-3 justify-between border-b-[0.5px] border-background  bg-background3 rounded-t-xl overflow-hidden">
+            <Link href="/"><p className="w-8 h-8 rounded-full bg-[#4a4a4a] flex items-center justify-center"><img src='/icons/back.svg' alt={teams.away.name} className="w-3 h-3 mr-[2px] -mt-[1px]" /></p></Link>
             {league && (
-              <div className="mb-6 flex items-center gap-3">
-                <img src={league.logo} alt={league.name} className="w-8 h-8" />
-                <div>
-                  <h2 className="font-bold text-lg">{league.name}</h2>
-                  <p className="text-sm text-gray-500">{league.country} - {league.round}</p>
-                </div>
-              </div>
-            )}
+              <p className="text-lg font-bold text-white text-center">{league.country} - {league.round}</p>
+            )} 
+            <div className="w-7"></div>
+          </div>
+          <div className="px-4 py-8  bg-background3 rounded-b-xl overflow-hidden">
+            <div className="flex items-center gap-3 justify-center">
+              <img src={league.logo} alt={league.name} className="w-auto h-6" />
+              <h2 className="font-bold text-lg">{league.name}</h2>
+            </div>
 
             {/* Match Score */}
             {fixture && teams && (
-              <div className="bg-white rounded-lg p-6 mb-6">
-                <div className="text-center mb-4">
+              <div className="rounded-lg p-6">
+                <div className="text-center">
                   <p className="text-sm text-gray-500">
                     {new Date(fixture.date).toLocaleDateString('vi-VN', {
                       weekday: 'long',
@@ -115,25 +97,158 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
                   </div>
                 </div>
               </div>
-            )}
+            )}  
+          </div>
+          
+          <div className="mt-4 p-4 bg-background3 rounded-xl overflow-hidden">
+            <h3 className="font-bold text-lg mb-4 text-center text-white">Sự kiện</h3>
+            {events && events.length > 0 ? (
+              <div className="space-y-1">
+                {(() => {
+                  // Phân loại events thành home và away
+                  const homeEvents: any[] = [];
+                  const awayEvents: any[] = [];
+                  
+                  events.forEach((event: any) => {
+                    if (event.team?.id === teams?.home?.id) {
+                      homeEvents.push(event);
+                    } else if (event.team?.id === teams?.away?.id) {
+                      awayEvents.push(event);
+                    }
+                  });
+                  
+                  // Tạo map để group events theo timestamp
+                  const eventsByTime: Record<string, { home?: any; away?: any; time: any }> = {};
+                  
+                  homeEvents.forEach((event: any) => {
+                    const timeKey = `${event.time.elapsed}_${event.time.extra || 0}`;
+                    if (!eventsByTime[timeKey]) {
+                      eventsByTime[timeKey] = { time: event.time };
+                    }
+                    eventsByTime[timeKey].home = event;
+                  });
+                  
+                  awayEvents.forEach((event: any) => {
+                    const timeKey = `${event.time.elapsed}_${event.time.extra || 0}`;
+                    if (!eventsByTime[timeKey]) {
+                      eventsByTime[timeKey] = { time: event.time };
+                    }
+                    eventsByTime[timeKey].away = event;
+                  });
+                  
+                  // Sắp xếp theo thời gian
+                  const sortedTimes = Object.keys(eventsByTime).sort((a, b) => {
+                    const [elapsedA, extraA] = a.split('_').map(Number);
+                    const [elapsedB, extraB] = b.split('_').map(Number);
+                    if (elapsedA !== elapsedB) return elapsedA - elapsedB;
+                    return extraA - extraB;
+                  });
+                  
+                  // Helper functions
+                  const getEventIcon = (event: any) => {
+                    if (event.type === 'Substitution') {
+                      return (
+                        <div className="flex items-center gap-0.5">
+                          <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+                          </svg>
+                          <svg className="w-4 h-4 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                      );
+                    } else if (event.type === 'Card') {
+                      const cardColor = event.detail === 'Yellow Card' || event.detail?.includes('Yellow') ? 'bg-yellow-500' : 'bg-red-500';
+                      return <div className={`w-3 h-4 ${cardColor} rounded-sm`}></div>;
+                    } else if (event.type === 'Goal') {
+                      return <p className="text-md flex items-center gap-4 font-bold text-red-500">Ghi bàn!
+                        <img src='/icons/banh.svg' alt="goal" className="w-5 h-5" />
+                      </p>;
+                    }
+                    return null;
+                  };
 
-            {/* Match Events */}
-            {events && events.length > 0 && (
-              <div className="mb-6">
-                <h3 className="font-bold text-lg mb-4">Match Events</h3>
-                <div className="space-y-2">
-                  {events.map((event: any, index: number) => (
-                    <div key={index} className="flex items-center gap-3 p-2 bg-gray-50 rounded">
-                      <span className="text-sm font-medium w-16">
-                        {event.time.elapsed}' {event.time.extra && `+${event.time.extra}`}
-                      </span>
-                      <span className="text-sm">{event.type}</span>
-                      <span className="text-sm font-medium flex-1">
-                        {event.team.name}: {event.player?.name}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                  const getPlayerDisplay = (event: any) => {
+                    if (event.type === 'Substitution') {
+                      const playerIn = event.assist?.name || event.player?.name;
+                      const playerOut = event.player?.name;
+                      return (
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-400 text-sm font-medium">{playerIn}</span>
+                          <span className="text-red-400 text-sm font-medium flex items-center gap-1">
+                            {playerOut}
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </span>
+                        </div>
+                      );
+                    } else {
+                      return <span className="text-white text-sm font-medium">{event.player?.name || event.team.name}</span>;
+                    }
+                  };
+
+                  return sortedTimes.map((timeKey, index) => {
+                    const { home, away, time } = eventsByTime[timeKey];
+                    const prevTime = index > 0 ? sortedTimes[index - 1] : null;
+                    const prevTimeData = prevTime ? eventsByTime[prevTime] : null;
+                    const showHalfTimeSeparator = prevTimeData && prevTimeData.time.elapsed <= 45 && time.elapsed > 45;
+                    
+                    return (
+                      <div key={timeKey}>
+                        {/* Half-time separator */}
+                        {showHalfTimeSeparator && (
+                          <div className="flex items-center justify-center my-2">
+                            <div className="flex-1 h-px bg-background"></div>
+                            <span className="px-3 text-white text-sm">GL {goals?.home ?? 0} - {goals?.away ?? 0}</span>
+                            <div className="flex-1 h-px bg-background"></div>
+                          </div>
+                        )}
+                        
+                        {/* Injury time notification */}
+                        {time.extra && time.extra > 0 && index > 0 && eventsByTime[sortedTimes[index - 1]]?.time.extra === undefined && (
+                          <div className="text-white text-xs text-center py-1 text-gray-400">
+                            đã thêm + {time.extra} phút
+                          </div>
+                        )}
+
+                        {/* Event row - 3 columns: Home | Time | Away */}
+                        <div className="flex items-center gap-3 py-2">
+                          {/* Home events column */}
+                          <div className="flex-1 flex items-center gap-2 justify-end text-right">
+                            {home && (
+                              <>
+                                <div className="flex-1">{getPlayerDisplay(home)}</div>
+                                <div className="flex-shrink-0">{getEventIcon(home)}</div>
+                              </>
+                            )}
+                          </div>
+
+                          {/* Time column - center */}
+                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#4a4a4a]  flex items-center justify-center">
+                            <span className="text-white text-xs font-medium">
+                              {time.elapsed}'{time.extra ? `+${time.extra}` : ''}
+                            </span>
+                          </div>
+
+                          {/* Away events column */}
+                          <div className="flex-1 flex items-center gap-2 justify-start text-left">
+                            {away && (
+                              <>
+                                <div className="flex-shrink-0">{getEventIcon(away)}</div>
+                                <div className="flex-1">{getPlayerDisplay(away)}</div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+            ) : (
+              <div className="text-center text-gray-500 py-8">
+                <p>Chưa có sự kiện nào</p>
               </div>
             )}
           </div>

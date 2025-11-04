@@ -6,7 +6,6 @@ const NEXT_PUBLIC_RAPIDAPI_URL = process.env.NEXT_PUBLIC_RAPIDAPI_URL
 export async function fetchFixturesLive(live: string) {
   try {  
     const url = `${NEXT_PUBLIC_RAPIDAPI_URL}${API.PRODUCT.fixtures}?live=${live}`;
-    console.log(url);
     const { data } = await http.get(url);
 
     // Group fixtures by league.id
@@ -67,7 +66,7 @@ export async function fetchFixturesLive(live: string) {
         console.error('API error:', errorCode);
       }
     } else {
-      console.error('RESPONSE NOT FOUND');
+      console.error('FetchFixturesLive Request Error');
     }
     return {
       success: false,

@@ -20,9 +20,6 @@ export default function Tabs({ tabs, defaultTab, menuStyle, switchTab }: TabsPro
   const [activeTab, setActiveTab] = useState(defaultTab || tabs[0].id);
   menuStyle = menuStyle === undefined ? "style-1" : menuStyle;
 
-  console.log(menuStyle, menuStyle === undefined);
-  
-
   // callback switchTab change activeTab
   useEffect(() => {
     switchTab?.(activeTab);

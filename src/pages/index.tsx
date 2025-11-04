@@ -10,7 +10,8 @@ import Tabs from "@/components/Tabs";
 import Loading from "@/components/Loading";
 import Metadata from "@/components/Metadata";
 import { fetchFixturesLive } from "@/api/fetchData";
-import { cache } from "@/utils/cache"; 
+import { cache } from "@/utils/cache";
+import { CACHE_KEYS } from "@/constants/endpoint"; 
 
 
 const tabMenu = [

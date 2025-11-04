@@ -190,20 +190,27 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const liveParam = "all"; // Có thể lấy từ query params nếu cần: context.query.live || "all"
   const cacheKey = CACHE_KEYS.FIXTURES_LIVE(liveParam);
   
+  console.log(`[FixturesLive] Request received - Param: ${liveParam}, CacheKey: ${cacheKey}`);
+  
   // Check cache first
   let fixturesLiveData = cache.get<any[]>(cacheKey);
   
   if (!fixturesLiveData) {
+    console.log(`[FixturesLive] Cache miss - Fetching from API...`);
     // Fetch from API if not in cache
     const { success, data: response } = await fetchFixturesLive(liveParam);
     
     if (success && response?.response) {
       fixturesLiveData = response.response;
+      console.log(`[FixturesLive] API success - Data length: ${fixturesLiveData.length}, Caching...`);
       // Cache for 1 minute (60000 milliseconds)
       cache.set(cacheKey, fixturesLiveData, 60000);
     } else {
+      console.log(`[FixturesLive] API failed - Returning empty array`);
       fixturesLiveData = [];
     }
+  } else {
+    console.log(`[FixturesLive] Using cached data - Data length: ${fixturesLiveData.length}`);
   }
 
   return {

@@ -10,29 +10,35 @@ class Cache {
 
   set<T>(key: string, data: T, ttl: number = 60000): void {
     // Default TTL is 60 seconds (1 minute)
+    const timestamp = Date.now();
     this.cache.set(key, {
       data,
-      timestamp: Date.now(),
+      timestamp,
       ttl,
     });
+    console.log(`[CACHE] SET - Key: ${key}, TTL: ${ttl}ms, Timestamp: ${new Date(timestamp).toISOString()}`);
   }
 
   get<T>(key: string): T | null {
     const entry = this.cache.get(key);
     
     if (!entry) {
+      console.log(`[CACHE] MISS - Key: ${key} (not found)`);
       return null;
     }
 
     const now = Date.now();
     const age = now - entry.timestamp;
+    const remainingTTL = entry.ttl - age;
 
     // Check if entry has expired
     if (age > entry.ttl) {
       this.cache.delete(key);
+      console.log(`[CACHE] EXPIRED - Key: ${key}, Age: ${age}ms (exceeded TTL: ${entry.ttl}ms)`);
       return null;
     }
 
+    console.log(`[CACHE] HIT - Key: ${key}, Age: ${Math.round(age / 1000)}s, Remaining: ${Math.round(remainingTTL / 1000)}s`);
     return entry.data as T;
   }
 

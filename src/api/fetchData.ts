@@ -72,4 +72,31 @@ export async function fetchFixturesLive(live: string) {
       success: false,
     };
   }
+}
+
+export async function fetchMatchDetail(fixtureId: string) {
+  try {  
+    const url = `${NEXT_PUBLIC_RAPIDAPI_URL}${API.PRODUCT.fixtures}?id=${fixtureId}`;
+    const { data } = await http.get(url);
+
+    return {
+      success: true,
+      data: data,
+    };
+  } catch (error: unknown) {
+    console.error(error);
+
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const anyError = error as { response?: { data?: { errorCode?: string } } };
+      const errorCode = anyError.response?.data?.errorCode;
+      if (errorCode) {
+        console.error('API error:', errorCode);
+      }
+    } else {
+      console.error('FetchMatchDetail Request Error');
+    }
+    return {
+      success: false,
+    };
+  }
 } 

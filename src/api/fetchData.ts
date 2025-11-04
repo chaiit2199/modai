@@ -72,5 +72,4 @@ export async function fetchFixturesLive(live: string) {
       success: false,
     };
   }
-}
- 
+} 

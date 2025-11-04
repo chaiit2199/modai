@@ -9,4 +9,5 @@ export const API = {
 // Cache keys
 export const CACHE_KEYS = {
   FIXTURES_LIVE: (live: string = 'all') => `fixtures-live-${live}`,
+  MATCH_DETAIL: (fixtureId: string) => `match-detail-${fixtureId}`,
 } as const;

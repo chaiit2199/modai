@@ -202,7 +202,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     
     if (success && response?.response) {
       fixturesLiveData = response.response;
-      console.log(`[FixturesLive] API success - Data length: ${fixturesLiveData.length}, Caching...`);
       // Cache for 1 minute (60000 milliseconds)
       cache.set(cacheKey, fixturesLiveData, 60000);
     } else {

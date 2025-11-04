@@ -7,11 +7,14 @@ interface FixturesLiveProps {
 
 export default function FixturesLive({ fixturesData }: FixturesLiveProps) {
     if(fixturesData.length === 0) return <p>Loading...</p>
+            console.log(fixturesData);
 
   return (
     <div className='flex flex-col gap-6'>
+
         {fixturesData && (
         fixturesData.map((item) => (
+            
             <div className='matches' key={item.league.id}>
                 <h5 className='matches-title'> 
                     <img src={item.league.logo} alt="item.league.logo" className="matches-title--icon"/>

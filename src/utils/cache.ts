@@ -8,7 +8,7 @@ interface CacheEntry<T> {
 class Cache {
   private cache: Map<string, CacheEntry<any>> = new Map();
 
-  set<T>(key: string, data: T, ttl: number = 60000): void {
+  set<T>(key: string, data: T, ttl: number = 120000): void {
     // Default TTL is 60 seconds (1 minute)
     const timestamp = Date.now();
     this.cache.set(key, {

@@ -15,7 +15,7 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer className="w-full bg-background3 mt-12">  
+    <footer className="w-full bg-background3 mt-12 border-t border-line">  
       <div className="container py-12 flex flex-col gap-6">
         <div className="grid grid-cols-3 gap-8"> 
           <div className="col-span-1">

@@ -43,7 +43,7 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
       <div className="flex gap-6">
         <div className="main-content gap-6">
           <div className="p-4 flex items-center gap-3 justify-between border-b-[0.5px] border-background  bg-background3 rounded-t-xl overflow-hidden">
-            <Link href="/"><p className="w-8 h-8 rounded-full bg-[#4a4a4a] flex items-center justify-center"><img src='/icons/back.svg' alt={teams.away.name} className="w-3 h-3 mr-[2px] -mt-[1px]" /></p></Link>
+            <Link href="/"><p className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"><img src='/icons/back.svg' alt={teams.away.name} className="w-3 h-3 mr-[2px] -mt-[1px]" /></p></Link>
             {league && (
               <p className="text-lg font-bold text-white text-center">{league.country} - {league.round}</p>
             )} 
@@ -184,7 +184,7 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
                         </div>
                       );
                     } else {
-                      return <span className="text-white text-sm font-medium">{event.player?.name || event.team.name}</span>;
+                      return <span className="text-sm font-medium">{event.player?.name || event.team.name}</span>;
                     }
                   };
 
@@ -225,8 +225,8 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
                           </div>
 
                           {/* Time column - center */}
-                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-[#4a4a4a]  flex items-center justify-center">
-                            <span className="text-white text-xs font-medium">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-200  flex items-center justify-center">
+                            <span className="text-sm font-semibold">
                               {time.elapsed}'{time.extra ? `+${time.extra}` : ''}
                             </span>
                           </div>

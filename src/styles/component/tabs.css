@@ -17,10 +17,10 @@
 
     .menu-tabs--style-1 {
         .menu-tabs--item {
-            @apply bg-background2 px-4 py-2 rounded-xl overflow-hidden;
+            @apply border border-line px-4 py-2 rounded-xl overflow-hidden;
 
             &.active {
-                @apply bg-active;
+                @apply bg-gray-200;
             }
         }
     }

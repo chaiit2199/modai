@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useState, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { useDevice } from '@/context/DeviceContext';
@@ -7,7 +6,6 @@ import MatchesComponent from "@/components/Matches/MatchesComponent";
 import RankingsComponent from "@/components/RankingsComponent";
 import FixturesLive from "@/components/Matches/FixturesLive";
 import Tabs from "@/components/Tabs";
-import Loading from "@/components/Loading";
 import Metadata from "@/components/Metadata";
 import { fetchFixturesLive } from "@/api/fetchData";
 import { cache } from "@/utils/cache";
@@ -87,7 +85,6 @@ interface HomeProps {
 
 export default function Home({ fixturesLiveData }: HomeProps) {
   const {isMobile} = useDevice();
-  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(tabMenu[0].id);
   const [activeTabTournament, setActiveTabTournament] = useState(tabTournament[0].id);
 
@@ -100,7 +97,7 @@ export default function Home({ fixturesLiveData }: HomeProps) {
       <div className="flex gap-6">
         <div className="main-content">
           <PageTitle />
-          <div className="bg-background3 rounded-2xl overflow-hidden px-4 py-8">
+          <div className="bg-background3 rounded-2xl overflow-hidden px-4 py-8 border border-line">
               <div className="mb-4">
                 <Tabs tabs={tabMenu} switchTab={(id) => setActiveTab(id)} />
               </div>
@@ -108,7 +105,7 @@ export default function Home({ fixturesLiveData }: HomeProps) {
               <div className="mb-4">
                 <Tabs tabs={tabTournament} switchTab={(id) => setActiveTabTournament(id)} menuStyle="style-2" />
               </div>
-
+ 
               {activeTab === "match-live" && (
                 <div className="flex flex-col gap-6">
                   <FixturesLive fixturesData={fixturesLiveData} /> 

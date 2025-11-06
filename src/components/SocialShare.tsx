@@ -58,7 +58,6 @@ export default function SocialShare({
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       {showFacebook && <FacebookShareButton url={url} />}
-      {showLinkedIn && <LinkedInShareButton url={url} />}
     </div>
   );
 }

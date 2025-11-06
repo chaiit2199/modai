@@ -35,14 +35,14 @@ export default function Tabs({ tabs, defaultTab, menuStyle, switchTab }: TabsPro
                         src={tab.icons} 
                         alt={`${tab.label} icon`} 
                         // Thêm class để dễ dàng tùy chỉnh style cho icon (ví dụ: kích thước, margin)
-                        className="tab-icon mr-2 h-3 w-3" 
+                        className="tab-icon mr-2 h-5 w-5" 
                       />
                     )}
                     {tab.label} 
                     {(activeTab === tab.id && menuStyle == "style-2") && (
                       <motion.div
                           layoutId="underline"
-                          className="absolute left-0 right-0 bottom-0 h-[2px] bg-active rounded-full"
+                          className="absolute left-0 right-0 bottom-0 h-[2px] bg-black rounded-full"
                           transition={{ type: "spring", stiffness: 500, damping: 30 }}
                       />
                     )}

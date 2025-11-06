@@ -2,14 +2,13 @@
   transition: all 0.3s;
   opacity: 0;
   visibility: hidden;
-  background: #000;
-  color: #424242;
+  background: transparent;
+  color: #fff;
   position: absolute;
   left: 0;
   top: 0;
   height: 100%;
   width: 100%;
-  min-height: 300px;
   left: 0;
   top: 0;
   z-index: 1;
@@ -22,8 +21,8 @@
 
 .loader,
 .loader:after {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
 }
 
 @keyframes spin_around {
@@ -53,10 +52,10 @@
   font-size: 6px;
   position: relative;
   text-indent: -9999em;
-  border-top: 3px solid rgba(199, 197, 197, 0);
-  border-right: 3px solid #00c694;
-  border-bottom: 3px solid #00c694;
-  border-left: 3px solid #00c694;
+  border-top: 2px solid rgba(199, 197, 197, 0);
+  border-right: 2px solid #F0F0F0;
+  border-bottom: 2px solid #F0F0F0;
+  border-left: 2px solid #F0F0F0;
   -webkit-animation: spin_around 0.8s infinite linear;
   animation: spin_around 0.8s infinite linear;
 }

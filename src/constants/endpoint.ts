@@ -4,7 +4,17 @@ export const API = {
     LIST: '/products',
     CATEGORY: '/products/category',
   }, 
+
+  USER: {
+    LOGIN: '/api/login',
+    REGISTER: '/api/register',
+    FORGOT_PASSWORD: '/api/forgot-password',
+    RESET_PASSWORD: '/api/reset-password',
+  },
 };
+
+// API Response Codes
+export const API_SUCCESS = "000";
 
 // Cache keys
 export const CACHE_KEYS = {

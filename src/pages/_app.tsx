@@ -7,7 +7,7 @@ import { DeviceProvider } from '@/context/DeviceContext';
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <DeviceProvider>
-      <div className="main-container">
+      <div className="main-container min-h-screen flex flex-col">
         <Header/>
         <Component {...pageProps} />
         <Footer />

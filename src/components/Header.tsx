@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
 import menuData from '@/private/menu.json';
 import { FacebookShareButton, LinkedInShareButton } from '@/components/SocialShare';
+import { isAuthenticated, getUser, clearAuth, getAccountInfo, User } from '@/utils/auth';
 
 interface SubMenuItem {
   id: number;
@@ -22,10 +23,15 @@ interface MenuItem {
 export default function Header() {
   const menuItems: MenuItem[] = menuData.menuItems;
   const pathname = usePathname();
+  const router = useRouter();
   const [hoveredMenu, setHoveredMenu] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [currentUrl, setCurrentUrl] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Get current URL for sharing
   useEffect(() => {
@@ -33,6 +39,73 @@ export default function Header() {
       setCurrentUrl(window.location.href);
     }
   }, [pathname]);
+
+  // Check authentication status only when needed
+  useEffect(() => {
+    const checkAuth = () => {
+      // Only check if we're on /auth routes or if there's a cookie token
+      const isAuthRoute = pathname.startsWith('/auth');
+      
+      // Check if there's a token cookie (without triggering cache lookup)
+      let hasTokenCookie = false;
+      if (typeof document !== 'undefined') {
+        const cookies = document.cookie.split(';');
+        hasTokenCookie = cookies.some(cookie => cookie.trim().startsWith('access_token='));
+      }
+      
+      // Only check authentication if on auth route or if token cookie exists
+      if (isAuthRoute || hasTokenCookie) {
+        // Use getAccountInfo first to avoid multiple getToken() calls
+        const accountInfo = getAccountInfo();
+        if (accountInfo && accountInfo.is_login) {
+          setIsLoggedIn(true);
+          setUser(accountInfo.user);
+        } else {
+          // Fallback to isAuthenticated if account_info not in cache
+          const authenticated = isAuthenticated();
+          setIsLoggedIn(authenticated);
+          if (authenticated) {
+            const userData = getUser();
+            setUser(userData);
+          } else {
+            setUser(null);
+          }
+        }
+      } else {
+        // Not on auth route and no token cookie, clear state
+        setIsLoggedIn(false);
+        setUser(null);
+      }
+    };
+
+    checkAuth();
+    // Only re-check on pathname change, not periodically
+  }, [pathname]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowUserDropdown(false);
+      }
+    };
+
+    if (showUserDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showUserDropdown]);
+
+  const handleLogout = () => {
+    clearAuth();
+    setIsLoggedIn(false);
+    setUser(null);
+    setShowUserDropdown(false);
+    router.push('/auth/login');
+  };
 
   const isActive = (href: string) => {
     if (href === '/') {
@@ -168,7 +241,46 @@ export default function Header() {
                   />
                 </svg>
               </button>
-            </div>
+
+              {isLoggedIn && user ? (
+                <div className="user-component" ref={dropdownRef}>
+                  <button onClick={() => setShowUserDropdown(!showUserDropdown)}
+                    className="cursor-pointer font-bold line-clamp-1 text-ellipsis user-component--title"
+                  >
+                    {user.username}
+                  </button>
+
+                  {showUserDropdown && (
+                    <div className="user-component--dropdown">
+                      <div className="px-4 py-3 border-b border-line">
+                        <p className="user-component--title">
+                          {user.username}
+                        </p>
+                        <p className="user-component--email">
+                          {user.email}
+                        </p>
+                      </div> 
+                     
+                      <div className="py-1"> 
+                        <Link href={`/auth/admin`}  className="w-full text-left px-4 pt-2 text-sm font-bold block">
+                          Quản lý
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="w-full text-left px-4 py-2 text-sm text-red-600 transition-colors cursor-pointer"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link href="/auth/login">
+                  <img src="/icons/login.svg" alt="Login" className="w-6 h-6" />
+                </Link>
+              )}
+            </div> 
           </div>
         </div>
       </div>

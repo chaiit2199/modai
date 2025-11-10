@@ -25,7 +25,7 @@ export default function RegisterForm() {
   useEffect(() => {
     setIsMounted(true)
     if (isAuthenticated()) {
-      router.push("/profile")
+      router.push("/auth/admin")
     }
   }, [router])
 

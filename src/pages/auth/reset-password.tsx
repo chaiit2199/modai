@@ -23,7 +23,7 @@ export default function ResetPasswordForm() {
   useEffect(() => {
     setIsMounted(true)
     if (isAuthenticated()) {
-      router.push("/auth/profile")
+      router.push("/auth/admin")
     }
   }, [router])
 
@@ -35,8 +35,6 @@ export default function ResetPasswordForm() {
     // Get token from query string (handle Next.js query format)
     const reset_token = router.query.token;
     const token = Array.isArray(reset_token) ? reset_token[0] : reset_token;
-
-    console.log(token);
 
     if (!token || typeof token !== 'string') {
       setError("Token không hợp lệ. Vui lòng kiểm tra lại link đặt lại mật khẩu.")

@@ -1,0 +1,25 @@
+.core_modal {
+    @apply fixed inset-0 flex items-center justify-center z-50;
+
+    .core_modal_bg {
+        @apply fixed inset-0 opacity-50 bg-black transition-opacity z-1;
+    }
+
+    .core_modal_content {
+        @apply relative z-2 border border-line bg-white rounded-2xl p-6 max-w-7xl w-full mx-4 max-h-[90vh] overflow-y-auto;
+
+        @apply flex flex-col;
+    }
+
+    .core_modal_header {
+        @apply flex justify-between items-center pb-4 mb-4 border-b border-line;
+    }
+
+    .core_modal_content_body {
+        @apply flex-auto overflow-y-auto;
+    }
+
+    .core_modal_footer {
+        @apply flex justify-end gap-3 pt-4 mt-4 border-t border-line;
+    }
+}

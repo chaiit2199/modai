@@ -3,7 +3,7 @@ import { useRouter } from "next/router"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { isAuthenticated } from "@/utils/auth"
+import { isAuthenticated, getUser } from "@/utils/auth"
 import { handleLogin } from "@/api/handle_login"
 import Loading from "@/components/Loading"
 import { Eye, EyeOff } from "lucide-react"
@@ -22,7 +22,14 @@ export default function LoginForm() {
     setIsMounted(true)
     // Only check on client-side to avoid hydration mismatch
     if (isAuthenticated()) {
-      router.push("/profile")
+      const user = getUser()
+      // Only redirect to admin if user has admin role
+      if (user && user.role === "admin") {
+        router.push("/auth/admin")
+      } else if (user) {
+        // Redirect to profile for other roles
+        router.push("/auth/profile")
+      }
     }
   }, [router])
 
@@ -34,8 +41,14 @@ export default function LoginForm() {
     const result = await handleLogin(username, password)
 
     if (result.success) {
-      // Redirect to profile on success
-      router.push("/profile")
+      // Get user info to check role
+      const user = getUser()
+      // Redirect based on role
+      if (user && user.role === "admin") {
+        router.push("/auth/admin")
+      } else {
+        router.push("/auth/profile")
+      }
     } else {
       // Show error message
       setError(result.message);

@@ -15,10 +15,32 @@
     }
 
     .header-right {
-        @apply flex items-center gap-6 p-6;
+        @apply flex items-center gap-6 py-6 pl-6;
 
         >button {
             @apply relative;
         }
     } 
+}
+
+.user-component {
+    @apply relative w-14 flex justify-end;
+
+    .user-component--title {
+        @apply text-sm font-bold uppercase overflow-hidden text-ellipsis relative max-w-full; 
+        -webkit-box-orient: vertical;
+        display: -webkit-box; 
+        -webkit-line-clamp: 1;
+    }
+
+    .user-component--dropdown {
+        @apply absolute mt-7 right-0 w-64 bg-white border border-line rounded-2xl z-50;
+    }
+
+    .user-component--email {
+        @apply text-xs text-zinc-600 dark:text-zinc-400 mt-1 overflow-hidden text-ellipsis;
+        -webkit-box-orient: vertical;
+        display: -webkit-box; 
+        -webkit-line-clamp: 1;
+    }
 }

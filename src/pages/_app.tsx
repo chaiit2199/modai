@@ -4,14 +4,13 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import '@/styles/app.css';
 import { DeviceProvider } from '@/context/DeviceContext';
-import { isAuthenticated } from '@/utils/auth';
+import { initializeAuth } from '@/utils/auth';
 
 export default function App({ Component, pageProps }: AppProps) {
-  // Check authentication status on app load
+  // Initialize auth on app load - try to refresh token if expired
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // This will check token and sync account_info
-      isAuthenticated();
+      initializeAuth();
     }
   }, []);
 

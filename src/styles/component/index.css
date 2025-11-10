@@ -1,3 +1,4 @@
+@import "./scroll_bar.css";
 @import "./header.css";
 @import "./footer.css";
 @import "./page-title.css";
@@ -7,4 +8,5 @@
 @import "./tabs.css";
 @import "./matches.css";
 @import "./post.css";
-
+@import "./modal.css";
+@import "./animation.css";

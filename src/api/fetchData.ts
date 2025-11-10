@@ -1,7 +1,20 @@
 import { API } from '@/constants/endpoint';
 import http from './http';
+import { ENV } from '@/constants';
 
 const NEXT_PUBLIC_RAPIDAPI_URL = process.env.NEXT_PUBLIC_RAPIDAPI_URL 
+const CORE_API_BASE_URL = ENV.CORE_API_BASE_URL;
+
+import axios from 'axios';
+
+const coreApiClient = axios.create({
+  baseURL: CORE_API_BASE_URL,
+  timeout: 10000,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
  
 export async function fetchFixturesLive(live: string) {
   try {  
@@ -79,6 +92,34 @@ export async function fetchMatchDetail(fixtureId: string) {
     const url = `${NEXT_PUBLIC_RAPIDAPI_URL}${API.PRODUCT.fixtures}?id=${fixtureId}`;
     const { data } = await http.get(url);
 
+    return {
+      success: true,
+      data: data,
+    };
+  } catch (error: unknown) {
+    console.error(error);
+
+    if (typeof error === 'object' && error !== null && 'response' in error) {
+      const anyError = error as { response?: { data?: { errorCode?: string } } };
+      const errorCode = anyError.response?.data?.errorCode;
+      if (errorCode) {
+        console.error('API error:', errorCode);
+      }
+    } else {
+      console.error('FetchMatchDetail Request Error');
+    }
+    return {
+      success: false,
+    };
+  }
+} 
+
+
+export async function fetchNewsLatest() {
+  try {  
+    const url = `${CORE_API_BASE_URL}${API.NEWS.LATEST}`;
+    const { data } = await coreApiClient.get(url);
+ 
     return {
       success: true,
       data: data,

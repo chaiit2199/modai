@@ -11,11 +11,7 @@ export default function MatchesComponent() {
             <img src="/images/match/team1-copyright.png" alt="National" className="matches-title--icon"/>
             Anh - Premier League
         </h5>
-        
-        <Matches />
-        <Matches />
-        <Matches />
-        <Matches />
+         
     </div>
     
   )

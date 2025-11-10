@@ -28,7 +28,7 @@
 
         .post-content {
             .post-title {
-                @apply font-semibold mb-2 text-lg;
+                @apply font-semibold mb-2 text-base;
                 -webkit-box-orient: vertical;
                 display: -webkit-box;
                 overflow: hidden;
@@ -42,4 +42,71 @@
             }
         }
     }
+}
+
+/* Post Detail Content Styles */
+.post-detail-content {
+    @apply text-base leading-relaxed;
+}
+
+.post-detail-content h1,
+.post-detail-content h2,
+.post-detail-content h3,
+.post-detail-content h4,
+.post-detail-content h5,
+.post-detail-content h6 {
+    @apply font-bold mt-6 mb-4;
+}
+
+.post-detail-content h1 {
+    @apply text-3xl;
+}
+
+.post-detail-content h2 {
+    @apply text-2xl;
+}
+
+.post-detail-content h3 {
+    @apply text-xl;
+}
+
+.post-detail-content p {
+    @apply mb-4;
+}
+
+.post-detail-content img {
+    @apply w-full rounded-xl my-4;
+}
+
+.post-detail-content ul,
+.post-detail-content ol {
+    @apply mb-4 pl-6;
+}
+
+.post-detail-content li {
+    @apply mb-2;
+}
+
+.post-detail-content a {
+    @apply text-blue-500 hover:underline;
+}
+
+.post-detail-content blockquote {
+    @apply border-l-4 border-gray-300 pl-4 italic my-4;
+}
+
+.post-detail-content code {
+    @apply bg-gray-100 px-2 py-1 rounded text-sm;
+}
+
+.post-detail-content pre {
+    @apply bg-gray-100 p-4 rounded-lg overflow-x-auto my-4;
+}
+
+.post-detail-content strong {
+    @apply font-bold;
+}
+
+.post-detail-content em {
+    @apply italic;
 }

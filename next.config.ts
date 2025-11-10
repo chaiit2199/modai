@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: "ochakanextjs.vercel.app",
         pathname: "/images/**",
       },
+      {
+        protocol: "https",
+        hostname: "https://drive.google.com",
+        pathname: "/images/**",
+      },
      {
         protocol: "https",
         hostname: "cdn.dummyjson.com",

@@ -7,9 +7,10 @@ import RankingsComponent from "@/components/RankingsComponent";
 import FixturesLive from "@/components/Matches/FixturesLive";
 import Tabs from "@/components/Tabs";
 import Metadata from "@/components/Metadata";
-import { fetchFixturesLive } from "@/api/fetchData";
+import { fetchFixturesLive, fetchNewsLatest } from "@/api/fetchData";
 import { cache } from "@/utils/cache";
 import { CACHE_KEYS } from "@/constants/endpoint"; 
+import NewsLatest from "@/components/News/NewsLatest";
 
 
 const tabMenu = [
@@ -81,9 +82,10 @@ const tabTournament = [
 
 interface HomeProps {
   fixturesLiveData: any[];
+  newsLatestData: any[];
 }
 
-export default function Home({ fixturesLiveData }: HomeProps) {
+export default function Home({ fixturesLiveData, newsLatestData }: HomeProps) {
   const {isMobile} = useDevice();
   const [activeTab, setActiveTab] = useState(tabMenu[0].id);
   const [activeTabTournament, setActiveTabTournament] = useState(tabTournament[0].id);
@@ -136,47 +138,8 @@ export default function Home({ fixturesLiveData }: HomeProps) {
         </div>
 
         <div className="nav-content">
-            <h2 className="text-xl font-bold mb-6">Trending News</h2>
-
-            <div className="post style1 mb-8">
-              <img src="/images/blog/post-1.png" alt="Slide Image" className='post-image'/>
-              <h5  className='post-title'>Results and scores from the Premier League Results and scores from the Premier League....!!</h5>
-              <p className="post-date">
-                5 hours ago
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <div className="post style2">
-                <img src="/images/blog/post-2.png" alt="Slide Image" className='post-image'/>
-                <div className="post-content">
-                  <h5  className='post-title'>Results and scores from the Premier League Results and scores from the Premier League....!!</h5>
-                  <p className="post-date">
-                    11 oct 2023, 06:00 aM
-                  </p>
-                </div>
-              </div>
-
-              <div className="post style2">
-                <img src="/images/blog/post-2.png" alt="Slide Image" className='post-image'/>
-                <div className="post-content">
-                  <h5  className='post-title'>Results and scores from the Premier League Results and scores from the Premier League....!!</h5>
-                  <p className="post-date">
-                    11 oct 2023, 06:00 aM
-                  </p>
-                </div>
-              </div>
-
-              <div className="post style2">
-                <img src="/images/blog/post-2.png" alt="Slide Image" className='post-image'/>
-                <div className="post-content">
-                  <h5  className='post-title'>Results and scores from the Premier League Results and scores from the Premier League....!!</h5>
-                  <p className="post-date">
-                    11 oct 2023, 06:00 aM
-                  </p>
-                </div>
-              </div>
-            </div>
+            <h2 className="text-xl font-bold mb-6">Tin tức</h2>
+            <NewsLatest newsLatestData={newsLatestData} />
         </div>
       </div>
     </div>
@@ -185,33 +148,45 @@ export default function Home({ fixturesLiveData }: HomeProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const liveParam = "all"; // Có thể lấy từ query params nếu cần: context.query.live || "all"
-  const cacheKey = CACHE_KEYS.FIXTURES_LIVE(liveParam);
+  const fixturesCacheKey = CACHE_KEYS.FIXTURES_LIVE(liveParam);
+  const newsCacheKey = CACHE_KEYS.NEWS_LATEST();
   
-  console.log(`[FixturesLive] Request received - Param: ${liveParam}, CacheKey: ${cacheKey}`);
-  
-  // Check cache first
-  let fixturesLiveData = cache.get<any[]>(cacheKey);
+  // Fetch fixtures data
+  let fixturesLiveData = cache.get<any[]>(fixturesCacheKey);
   
   if (!fixturesLiveData) {
-    console.log(`[FixturesLive] Cache miss - Fetching from API...`);
-    // Fetch from API if not in cache
     const { success, data: response } = await fetchFixturesLive(liveParam);
     
     if (success && response?.response) {
       fixturesLiveData = response.response;
       // Cache for 1 minute (60000 milliseconds)
-      cache.set(cacheKey, fixturesLiveData, 60000);
+      cache.set(fixturesCacheKey, fixturesLiveData, 60000);
     } else {
-      console.log(`[FixturesLive] API failed - Returning empty array`);
       fixturesLiveData = [];
     }
-  } else {
-    console.log(`[FixturesLive] Using cached data - Data length: ${fixturesLiveData.length}`);
   }
+
+  // Fetch news data
+  let newsLatestData = cache.get<any[]>(newsCacheKey);
+  
+  if (!newsLatestData) {
+    const { success, data: response } = await fetchNewsLatest();
+    
+    if (success && response) {
+      // Handle different possible data structures
+      const data = response?.data || response?.response || response || [];
+      newsLatestData = Array.isArray(data) ? data : [];
+      // Cache for 1 minute (60000 milliseconds)
+      cache.set(newsCacheKey, newsLatestData, 60000);
+    } else {
+      newsLatestData = [];
+    }
+  } 
 
   return {
     props: {
       fixturesLiveData: fixturesLiveData || [],
+      newsLatestData: newsLatestData || [],
     },
   };
 }

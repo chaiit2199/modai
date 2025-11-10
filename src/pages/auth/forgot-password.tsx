@@ -20,7 +20,7 @@ export default function ForgotPasswordForm() {
   useEffect(() => {
     setIsMounted(true)
     if (isAuthenticated()) {
-      router.push("/profile")
+      router.push("/auth/admin")
     }
   }, [router])
 

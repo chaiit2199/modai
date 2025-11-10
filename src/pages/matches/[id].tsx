@@ -275,8 +275,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // Tạo cache key dựa trên fixtureId: "match-detail-1469104"
   const cacheKey = CACHE_KEYS.MATCH_DETAIL(fixtureId);
   
-  console.log(`[MatchDetail] Request received - FixtureId: ${fixtureId}, CacheKey: ${cacheKey}`);
-  
   // Check cache first - query data từ cache bằng fixtureId
   const cacheResult = cache.getWithInfo<any>(cacheKey);
   let matchData: any | null = null;
@@ -284,7 +282,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let cacheAge: number | undefined;
   
   if (!cacheResult) {
-    console.log(`[MatchDetail] ❌ Cache MISS - Fetching from API for fixtureId: ${fixtureId}...`);
     // Fetch from API if not in cache
     const { success, data } = await fetchMatchDetail(fixtureId);
     
@@ -292,9 +289,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       matchData = data;
       cache.set(cacheKey, matchData, 60000); // Cache for 1 minute
       dataSource = 'api';
-      console.log(`[MatchDetail] ✅ API success - Match found (ID: ${fixtureId}), Cached for 60s`);
     } else {
-      console.log(`[MatchDetail] ❌ API failed - Match not found (ID: ${fixtureId})`);
       matchData = null;
       dataSource = 'api';
     }
@@ -302,7 +297,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     matchData = cacheResult.data;
     cacheAge = Math.round(cacheResult.age / 1000); // Convert to seconds
     dataSource = 'cache';
-    console.log(`[MatchDetail] ✅ Cache HIT - Match found (ID: ${fixtureId}), Cache age: ${cacheAge}s`);
   }
 
   return {

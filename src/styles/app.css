@@ -51,14 +51,13 @@
   } 
 
   .main-content {
-    width: calc(100% - 360px);
+    width: calc(100% - 344px);
   }
 
   .nav-content {
-    @apply bg-background3 rounded-2xl overflow-hidden px-4 py-8 w-[320px] border border-line;
+    @apply relative bg-background3 rounded-2xl overflow-hidden p-4 py-8 w-[320px] border border-line;
   }
 }
 
 
 @import "./component/index.css";
-@import "./animation.css";

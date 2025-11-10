@@ -2,8 +2,9 @@
 
 import { cache } from './cache';
 
-const COOKIE_NAME = 'rerefresh_token';
+const ACCESS_TOKEN_CACHE_KEY = 'access_token';
 const ACCOUNT_INFO_CACHE_KEY = 'account_info';
+const ACCESS_TOKEN_COOKIE_NAME = 'access_token';
 
 export interface User {
   id: number;
@@ -13,9 +14,10 @@ export interface User {
 }
 
 export interface AuthResponse {
+  code: string;
   message: string;
   user: User;
-  token: string;
+  access_token: string;
 }
 
 export interface AccountInfo {
@@ -25,13 +27,28 @@ export interface AccountInfo {
 }
 
 /**
+ * Get token expiry time from JWT payload (in milliseconds)
+ */
+const getTokenExpiry = (token: string): number | null => {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp * 1000; // Convert to milliseconds
+  } catch (e) {
+    return null;
+  }
+};
+
+/**
  * Set cookie with token
  */
-const setCookie = (name: string, value: string, hours: number = 1): void => {
+const setCookie = (name: string, value: string, maxAge: number): void => {
   if (typeof document === 'undefined') return;
   
+  // Calculate expiry date from maxAge (in milliseconds)
   const expires = new Date();
-  expires.setTime(expires.getTime() + hours * 60 * 60 * 1000);
+  expires.setTime(expires.getTime() + maxAge);
+  
+  // Set cookie with SameSite=Lax for security (allows cross-site requests)
   document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax`;
 };
 
@@ -63,10 +80,22 @@ const deleteCookie = (name: string): void => {
 };
 
 /**
- * Save token to cookie and account info to cache
+ * Save access_token to cookie and memory (cache), and account info to cache
+ * Note: 
+ * - access_token expires in 30 minutes
+ * - refresh_token is stored in HTTPOnly cookie by server (expires in 1 day), client cannot access it
  */
-export const saveAuth = (token: string, user?: User): void => {
-  setCookie(COOKIE_NAME, token, 1); // Cookie expires in 1 hour
+export const saveAuth = (accessToken: string, user?: User): void => {
+  // Calculate TTL from token expiry
+  // access_token expires in 30 minutes, refresh_token expires in 1 day
+  const tokenExpiry = getTokenExpiry(accessToken);
+  const ttl = tokenExpiry ? Math.max(tokenExpiry - Date.now(), 0) : 30 * 60 * 1000; // Default 30 minutes if can't parse
+  
+  // Save access_token to cookie (persistent storage)
+  setCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, ttl);
+  
+  // Also save to memory cache for fast access
+  cache.set(ACCESS_TOKEN_CACHE_KEY, accessToken, ttl);
   
   // Save account info to cache
   const accountInfo: AccountInfo = {
@@ -75,15 +104,39 @@ export const saveAuth = (token: string, user?: User): void => {
     loginTime: Date.now(),
   };
   
-  // Cache for 1 hour (same as token expiry)
-  cache.set(ACCOUNT_INFO_CACHE_KEY, accountInfo, 60 * 60 * 1000);
+  // Cache account info for same duration as token
+  cache.set(ACCOUNT_INFO_CACHE_KEY, accountInfo, ttl);
 };
 
 /**
- * Get token from cookie
+ * Get access_token from memory (cache) or cookie
+ * Priority: memory cache > cookie
  */
 export const getToken = (): string | null => {
-  return getCookie(COOKIE_NAME);
+  // First try memory cache (faster)
+  const memoryToken = cache.get<string>(ACCESS_TOKEN_CACHE_KEY);
+  if (memoryToken) {
+    return memoryToken;
+  }
+  
+  // If not in memory, try cookie (persistent storage)
+  const cookieToken = getCookie(ACCESS_TOKEN_COOKIE_NAME);
+  if (cookieToken) {
+    // Check if token is still valid
+    const tokenExpiry = getTokenExpiry(cookieToken);
+    if (tokenExpiry && Date.now() < tokenExpiry) {
+      // Token is valid, restore to memory cache
+      const ttl = tokenExpiry - Date.now();
+      cache.set(ACCESS_TOKEN_CACHE_KEY, cookieToken, ttl);
+      return cookieToken;
+    } else {
+      // Token expired, remove from cookie
+      deleteCookie(ACCESS_TOKEN_COOKIE_NAME);
+      return null;
+    }
+  }
+  
+  return null;
 };
 
 /**
@@ -118,6 +171,7 @@ export const getAccountInfo = (): AccountInfo | null => {
 
 /**
  * Check if user is authenticated (check both token and account_info)
+ * If account_info is missing but token is valid, restore account_info from token
  */
 export const isAuthenticated = (): boolean => {
   const token = getToken();
@@ -140,11 +194,33 @@ export const isAuthenticated = (): boolean => {
     }
     
     // Check account_info in cache
-    const accountInfo = getAccountInfo();
-    if (!accountInfo || !accountInfo.is_login) {
-      // If account_info doesn't exist or is_login is false, clear auth (will clear account_info)
-      clearAuth();
-      return false;
+    let accountInfo = getAccountInfo();
+    
+    // If account_info doesn't exist but token is valid, restore it from token
+    // Only restore if account_info is completely missing (not just expired)
+    if (!accountInfo) {
+      try {
+        const user: User = {
+          id: parseInt(payload.sub) || payload.id,
+          username: payload.username,
+          role: payload.role,
+          email: payload.email,
+        };
+        
+        const ttl = exp - Date.now();
+        accountInfo = {
+          user,
+          is_login: true,
+          loginTime: Date.now(),
+        };
+        
+        // Restore account_info to cache only if it doesn't exist
+        cache.set(ACCOUNT_INFO_CACHE_KEY, accountInfo, ttl);
+      } catch (e) {
+        // If can't restore account_info, clear auth
+        clearAuth();
+        return false;
+      }
     }
     
     return true;
@@ -156,11 +232,77 @@ export const isAuthenticated = (): boolean => {
 };
 
 /**
- * Clear authentication data (delete cookie and clear account_info cache)
+ * Clear authentication data (clear access_token and account_info from memory and cookie)
+ * Note: refresh_token in HTTPOnly cookie will be cleared by server on logout
  */
 export const clearAuth = (): void => {
-  deleteCookie(COOKIE_NAME);
-  // Clear only account_info cache when logout or token expired
+  // Clear from memory cache
+  cache.clear(ACCESS_TOKEN_CACHE_KEY);
   cache.clear(ACCOUNT_INFO_CACHE_KEY);
+  
+  // Clear from cookie
+  deleteCookie(ACCESS_TOKEN_COOKIE_NAME);
+};
+
+/**
+ * Initialize auth on app load - try to refresh token if expired
+ * This should be called once when the app starts
+ */
+export const initializeAuth = async (): Promise<void> => {
+  if (typeof window === 'undefined') return;
+  
+  // Check cookie directly (don't use getToken() as it removes expired tokens)
+  const token = getCookie(ACCESS_TOKEN_COOKIE_NAME);
+  
+  // If no token, nothing to do
+  if (!token) {
+    return;
+  }
+  
+  // Check if token is expired
+  const tokenExpiry = getTokenExpiry(token);
+  if (tokenExpiry && Date.now() >= tokenExpiry) {
+    // Token expired, try to refresh
+    try {
+      // Dynamic import to avoid circular dependency
+      const { refreshAccessToken } = await import('@/api/handle_login');
+      const result = await refreshAccessToken();
+      
+      if (!result.success) {
+        // Refresh failed, clear auth
+        clearAuth();
+      }
+      // If refresh succeeded, token is already saved by refreshAccessToken
+    } catch (error) {
+      // Refresh failed, clear auth
+      console.error('Failed to refresh token on init:', error);
+      clearAuth();
+    }
+  } else if (tokenExpiry && Date.now() < tokenExpiry) {
+    // Token is still valid, restore to memory cache first
+    const ttl = tokenExpiry - Date.now();
+    cache.set(ACCESS_TOKEN_CACHE_KEY, token, ttl);
+    
+    // Then restore account_info from token
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const user: User = {
+        id: parseInt(payload.sub) || payload.id,
+        username: payload.username,
+        role: payload.role,
+        email: payload.email,
+      };
+      
+      const accountInfo: AccountInfo = {
+        user,
+        is_login: true,
+        loginTime: Date.now(),
+      };
+      cache.set(ACCOUNT_INFO_CACHE_KEY, accountInfo, ttl);
+    } catch (e) {
+      // If can't decode token, just skip account_info restoration
+      console.error('Failed to decode token for account_info:', e);
+    }
+  }
 };
 

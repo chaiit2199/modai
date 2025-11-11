@@ -31,8 +31,7 @@
   *:focus-visible {
     outline: none !important;
     box-shadow: none !important;
-  }
-
+  } 
   .container {
     @apply mx-auto px-4 max-w-[1200px];
   }

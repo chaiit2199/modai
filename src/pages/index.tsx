@@ -11,6 +11,7 @@ import { fetchFixturesLive, fetchNewsLatest } from "@/api/fetchData";
 import { cache } from "@/utils/cache";
 import { CACHE_KEYS } from "@/constants/endpoint"; 
 import NewsLatest from "@/components/News/NewsLatest";
+import Link from "next/link";
 
 
 const tabMenu = [
@@ -138,7 +139,11 @@ export default function Home({ fixturesLiveData, newsLatestData }: HomeProps) {
         </div>
 
         <div className="nav-content">
-            <h2 className="text-xl font-bold mb-6">Tin tức</h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold">Tin tức</h2>
+
+              <Link href="/news" className="hover:underline">Xem tất cả</Link>
+            </div>
             <NewsLatest newsLatestData={newsLatestData} />
         </div>
       </div>

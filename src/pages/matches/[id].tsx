@@ -169,22 +169,20 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
                   };
 
                   const getPlayerDisplay = (event: any) => {
-                    if (event.type === 'Substitution') {
+                    if (event.type === 'subst') {
                       const playerIn = event.assist?.name || event.player?.name;
                       const playerOut = event.player?.name;
                       return (
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-400 text-sm font-medium">{playerIn}</span>
+                        <div className="flex items-center gap-2 justify-center">
+                          <span className="text-green-400 text-sm font-medium opacity-50">{playerIn}</span>
+                          <img className="w-3 h-3" src="/icons/switch.svg" alt="switch.svg" />
                           <span className="text-red-400 text-sm font-medium flex items-center gap-1">
-                            {playerOut}
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                            </svg>
+                            {playerOut} 
                           </span>
                         </div>
                       );
                     } else {
-                      return <span className="text-sm font-medium">{event.player?.name || event.team.name}</span>;
+                      return <span className="text-sm font-medium"> {event.player?.name || event.team.name}</span>;
                     }
                   };
 
@@ -207,7 +205,7 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
                         
                         {/* Injury time notification */}
                         {time.extra && time.extra > 0 && index > 0 && eventsByTime[sortedTimes[index - 1]]?.time.extra === undefined && (
-                          <div className="text-white text-xs text-center py-1 text-gray-400">
+                          <div className="text-xs text-center py-1 text-gray-400">
                             đã thêm + {time.extra} phút
                           </div>
                         )}
@@ -219,13 +217,13 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
                             {home && (
                               <>
                                 <div className="flex-1">{getPlayerDisplay(home)}</div>
-                                <div className="flex-shrink-0">{getEventIcon(home)}</div>
+                                <div>{getEventIcon(home)}</div>
                               </>
                             )}
                           </div>
 
                           {/* Time column - center */}
-                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-200  flex items-center justify-center">
+                          <div className="w-10 h-10 rounded-full bg-gray-200  flex items-center justify-center">
                             <span className="text-sm font-semibold">
                               {time.elapsed}'{time.extra ? `+${time.extra}` : ''}
                             </span>
@@ -235,7 +233,7 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
                           <div className="flex-1 flex items-center gap-2 justify-start text-left">
                             {away && (
                               <>
-                                <div className="flex-shrink-0">{getEventIcon(away)}</div>
+                                <div>{getEventIcon(away)}</div>
                                 <div className="flex-1">{getPlayerDisplay(away)}</div>
                               </>
                             )}

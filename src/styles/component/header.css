@@ -20,7 +20,71 @@
         >button {
             @apply relative;
         }
-    } 
+    }
+
+    .hamburger-button {
+        @apply flex items-center justify-center w-8 h-8 p-0;
+        @apply text-current;
+        @apply transition-colors;
+    }
+
+    .mobile-menu-overlay {
+        @apply fixed inset-0 bg-white z-50;
+        opacity: 0;
+        pointer-events: none;
+        visibility: hidden;
+        transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        
+        &.open {
+            opacity: 1;
+            pointer-events: auto;
+            visibility: visible;
+        }
+    }
+
+    .mobile-menu {
+        @apply fixed top-0 right-0 h-full w-full;
+        @apply bg-white z-50;
+        @apply flex flex-col;
+        @apply overflow-y-auto;
+    }
+
+    .mobile-menu-list {
+        @apply flex flex-col py-4 gap-2;
+    }
+
+    .mobile-menu-item {
+        @apply flex flex-col;
+    }
+
+    .mobile-menu-link {
+        @apply block px-4 py-3 text-base font-semibold;
+        @apply text-current transition-colors;
+        @apply rounded-lg;
+        
+        &.active {
+            @apply underline;
+        }
+    }
+
+    .mobile-menu-toggle {
+        @apply p-2 text-current;
+        @apply transition-colors;
+    }
+
+    .mobile-submenu {
+        @apply mt-2 ml-4 flex flex-col gap-1;
+    }
+
+    .mobile-submenu-link {
+        @apply block px-4 py-2 text-sm;
+        @apply text-current transition-colors;
+        @apply rounded-lg;
+        
+        &.active {
+            @apply bg-active text-white;
+        }
+    }
 }
 
 .user-component {

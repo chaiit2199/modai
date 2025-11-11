@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from 'react';
 import menuData from '@/private/menu.json';
 import { FacebookShareButton, LinkedInShareButton } from '@/components/SocialShare';
 import { isAuthenticated, getUser, clearAuth, getAccountInfo, User } from '@/utils/auth';
+import { useDevice } from '@/context/DeviceContext';
 
 interface SubMenuItem {
   id: number;
@@ -24,6 +25,7 @@ export default function Header() {
   const menuItems: MenuItem[] = menuData.menuItems;
   const pathname = usePathname();
   const router = useRouter();
+  const { isMobile } = useDevice();
   const [hoveredMenu, setHoveredMenu] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -31,6 +33,8 @@ export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [expandedSubmenu, setExpandedSubmenu] = useState<number | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Get current URL for sharing
@@ -169,46 +173,205 @@ export default function Header() {
               MODAI
             </Link>
             
-            <ul className="header-menu">
+            {!isMobile && (
+              <ul className="header-menu">
+                {menuItems.map((item) => {
+                  const active = isActive(item.href);
+                  const hasSubmenu = item.submenu && item.submenu.length > 0;
+                  return (
+                    <li 
+                      key={item.id}
+                      className="relative py-6"
+                      onMouseEnter={() => hasSubmenu && setHoveredMenu(item.id)}
+                      onMouseLeave={() => setHoveredMenu(null)}
+                    >
+                      <Link href={item.href} className={`menu-item ${active ? 'active' : 'inactive'}`}>
+                        {item.label}
+                        {hasSubmenu && (
+                          <svg className="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        )}
+                      </Link>
+                      
+                      
+                      {hasSubmenu && (
+                        <ul 
+                          className={`absolute top-full left-0 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg overflow-hidden py-2 transition-all duration-200 ${
+                            hoveredMenu === item.id 
+                              ? 'opacity-100 visible translate-y-0' 
+                              : 'opacity-0 invisible -translate-y-2 pointer-events-none'
+                          }`}
+                        >
+                          {item.submenu?.map((subItem) => {
+                            const subActive = isActive(subItem.href);
+                            return (
+                              <li key={subItem.id}>
+                                <Link
+                                  href={subItem.href}
+                                  className={`block px-4 py-2 text-sm transition-colors ${
+                                    subActive
+                                      ? 'bg-zinc-100 dark:bg-zinc-800 text-black dark:text-white font-medium'
+                                      : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white'
+                                  }`}
+                                >
+                                  {subItem.label}
+                                </Link>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )} 
+            
+            <div className="header-right">
+                  <FacebookShareButton url={currentUrl} /> 
+
+                  <button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21 21l-4.35-4.35M9.75 17.25a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"
+                      />
+                    </svg>
+                  </button>
+
+                  {isLoggedIn && user ? (
+                    <div className="user-component" ref={dropdownRef}>
+                      <button onClick={() => setShowUserDropdown(!showUserDropdown)}
+                        className="cursor-pointer font-bold line-clamp-1 text-ellipsis user-component--title"
+                      >
+                        {user.username}
+                      </button>
+
+                      {showUserDropdown && (
+                        <div className="user-component--dropdown">
+                          <div className="px-4 py-3 border-b border-line">
+                            <p className="user-component--title">
+                              {user.username}
+                            </p>
+                            <p className="user-component--email">
+                              {user.email}
+                            </p>
+                          </div> 
+                         
+                          <div className="py-1"> 
+                            <Link href={`/auth/admin`}  className="w-full text-left px-4 pt-2 text-sm font-bold block">
+                              Quản lý
+                            </Link>
+                            <button
+                              onClick={handleLogout}
+                              className="w-full text-left px-4 py-2 text-sm text-red-600 transition-colors cursor-pointer"
+                            >
+                              Logout
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link href="/auth/login">
+                      <img src="/icons/login.svg" alt="Login" className="w-6 h-6" />
+                    </Link>
+                  )}
+
+              {/* Hamburger menu button - only visible on mobile */}
+              {isMobile && (
+                <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(!isMobileMenuOpen);
+                    if (isMobileMenuOpen) {
+                      setExpandedSubmenu(null);
+                    }
+                  }} 
+                  className="hamburger-button" aria-label="Toggle menu">
+                  <img src="/icons/menu.svg" alt="Menu" className="w-5 h-5" />
+                </button>
+              )}
+            </div> 
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile menu overlay */}
+      {isMobile && (
+        <div 
+          className={`mobile-menu-overlay ${isMobileMenuOpen ? 'open' : ''}`}
+          onClick={() => {
+            setIsMobileMenuOpen(false);
+            setExpandedSubmenu(null);
+          }}
+        >
+          <div 
+            className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-4 mt-[21px]">
+              <Link  href="/" className="logo"> 
+                MODAI
+              </Link>
+              <button onClick={() => setIsMobileMenuOpen(false)}>
+                <img src="/icons/close.svg" alt="Close" className="w-4 h-4 mr-1" />
+              </button>
+            </div>
+            <ul className="mobile-menu-list">
               {menuItems.map((item) => {
                 const active = isActive(item.href);
                 const hasSubmenu = item.submenu && item.submenu.length > 0;
+                
                 return (
-                  <li 
-                    key={item.id}
-                    className="relative py-6"
-                    onMouseEnter={() => hasSubmenu && setHoveredMenu(item.id)}
-                    onMouseLeave={() => setHoveredMenu(null)}
-                  >
-                    <Link href={item.href} className={`menu-item ${active ? 'active' : 'inactive'}`}>
-                      {item.label}
-                      {hasSubmenu && (
-                        <svg className="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      )}
-                    </Link>
-                    
-                    
-                    {hasSubmenu && (
-                      <ul 
-                        className={`absolute top-full left-0 w-48 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg overflow-hidden py-2 transition-all duration-200 ${
-                          hoveredMenu === item.id 
-                            ? 'opacity-100 visible translate-y-0' 
-                            : 'opacity-0 invisible -translate-y-2 pointer-events-none'
-                        }`}
+                  <li key={item.id} className="mobile-menu-item">
+                    <div className="flex items-center justify-between">
+                      <Link 
+                        href={item.href} 
+                        className={`mobile-menu-link ${active ? 'active' : ''}`}
+                        onClick={() => {
+                          if (!hasSubmenu) {
+                            setIsMobileMenuOpen(false);
+                          }
+                        }}
                       >
+                        {item.label}
+                      </Link>
+                      {hasSubmenu && (
+                        <button
+                          onClick={() => setExpandedSubmenu(expandedSubmenu === item.id ? null : item.id)}
+                          className="mobile-menu-toggle"
+                        >
+                          <svg 
+                            className={`w-5 h-5 transition-transform ${expandedSubmenu === item.id ? 'rotate-180' : ''}`}
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                    
+                    {hasSubmenu && expandedSubmenu === item.id && (
+                      <ul className="mobile-submenu">
                         {item.submenu?.map((subItem) => {
                           const subActive = isActive(subItem.href);
                           return (
                             <li key={subItem.id}>
                               <Link
                                 href={subItem.href}
-                                className={`block px-4 py-2 text-sm transition-colors ${
-                                  subActive
-                                    ? 'bg-zinc-100 dark:bg-zinc-800 text-black dark:text-white font-medium'
-                                    : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-black dark:hover:text-white'
-                                }`}
+                                className={`mobile-submenu-link ${subActive ? 'active' : ''}`}
+                                onClick={() => setIsMobileMenuOpen(false)}
                               >
                                 {subItem.label}
                               </Link>
@@ -221,69 +384,9 @@ export default function Header() {
                 );
               })}
             </ul>
-
-            <div className="header-right">
-              <FacebookShareButton url={currentUrl} /> 
-
-              <button>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21 21l-4.35-4.35M9.75 17.25a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15z"
-                  />
-                </svg>
-              </button>
-
-              {isLoggedIn && user ? (
-                <div className="user-component" ref={dropdownRef}>
-                  <button onClick={() => setShowUserDropdown(!showUserDropdown)}
-                    className="cursor-pointer font-bold line-clamp-1 text-ellipsis user-component--title"
-                  >
-                    {user.username}
-                  </button>
-
-                  {showUserDropdown && (
-                    <div className="user-component--dropdown">
-                      <div className="px-4 py-3 border-b border-line">
-                        <p className="user-component--title">
-                          {user.username}
-                        </p>
-                        <p className="user-component--email">
-                          {user.email}
-                        </p>
-                      </div> 
-                     
-                      <div className="py-1"> 
-                        <Link href={`/auth/admin`}  className="w-full text-left px-4 pt-2 text-sm font-bold block">
-                          Quản lý
-                        </Link>
-                        <button
-                          onClick={handleLogout}
-                          className="w-full text-left px-4 py-2 text-sm text-red-600 transition-colors cursor-pointer"
-                        >
-                          Logout
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link href="/auth/login">
-                  <img src="/icons/login.svg" alt="Login" className="w-6 h-6" />
-                </Link>
-              )}
-            </div> 
           </div>
         </div>
-      </div>
+      )}
     </header>
   );
 }

@@ -33,7 +33,7 @@
 }
 
 .rankings {
-    @apply relative rounded-xl border border-line overflow-hidden;
+    @apply relative rounded-xl border border-line overflow-hidden overflow-x-auto;
 
     .rankings-title {
         @apply p-4 font-bold bg-gray-200 flex items-center text-sm;
@@ -44,7 +44,7 @@
     }
 
     .matches-table {
-        @apply w-full table-fixed;
+        @apply w-full table-fixed md:min-w-[800px];
         tr td {
             @apply p-4;
         }

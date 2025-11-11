@@ -43,7 +43,7 @@ export default function NewsDetail({ postData, dataSource, cacheAge, newsLatestD
           />
         )}
       </div>
-      <div className="flex gap-6">
+      <div className="flex gap-6 flex-col">
         <div className="main-content">  
           
           <div className="bg-background3 rounded-2xl overflow-hidden px-4 pb-8 border border-line"> 

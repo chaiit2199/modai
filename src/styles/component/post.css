@@ -23,7 +23,8 @@
     &.style2 {
         @apply flex gap-4 items-center;
         .post-image {
-            @apply w-full rounded-xl overflow-hidden;
+            @apply rounded-xl overflow-hidden h-[80px] object-cover w-full;
+            max-width: 100px;
         }
 
         .post-content {

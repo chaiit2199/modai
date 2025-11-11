@@ -97,7 +97,7 @@ export default function Home({ fixturesLiveData, newsLatestData }: HomeProps) {
     <div className="container my-8">
       <Metadata/>
 
-      <div className="flex gap-6">
+      <div className="flex md:flex-col gap-6">
         <div className="main-content">
           <PageTitle />
           <div className="bg-background3 rounded-2xl overflow-hidden px-4 py-8 border border-line">

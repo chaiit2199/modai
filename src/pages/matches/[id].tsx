@@ -40,7 +40,7 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
     <div className="container my-8">
       <Metadata/>
       
-      <div className="flex gap-6">
+      <div className="flex gap-6 md:flex-col">
         <div className="main-content gap-6">
           <div className="p-4 flex items-center gap-3 justify-between border-b-[0.5px] border-background  bg-background3 rounded-t-xl overflow-hidden">
             <Link href="/"><p className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"><img src='/icons/back.svg' alt={teams.away.name} className="w-3 h-3 mr-[2px] -mt-[1px]" /></p></Link>
@@ -49,7 +49,7 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
             )} 
             <div className="w-7"></div>
           </div>
-          <div className="px-4 py-8  bg-background3 rounded-b-xl overflow-hidden">
+          <div className="px-4 pb-8  bg-background3 rounded-b-xl overflow-hidden">
             <div className="flex items-center gap-3 justify-center">
               <img src={league.logo} alt={league.name} className="w-auto h-6" />
               <h2 className="font-bold text-lg">{league.name}</h2>
@@ -57,7 +57,7 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
 
             {/* Match Score */}
             {fixture && teams && (
-              <div className="rounded-lg p-6">
+              <div className="rounded-lg py-6">
                 <div className="text-center">
                   <p className="text-sm text-gray-500">
                     {new Date(fixture.date).toLocaleDateString('vi-VN', {
@@ -75,13 +75,13 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
                 <div className="flex items-center justify-between">
                   <div className="flex-1 text-right">
                     <div className="flex items-center justify-end gap-3 mb-2">
-                      <span className="font-bold text-xl">{teams.home.name}</span>
-                      <img src={teams.home.logo} alt={teams.home.name} className="w-12 h-12" />
+                      <span className="font-bold text-xl leading-none">{teams.home.name}</span>
+                      <img src={teams.home.logo} alt={teams.home.name} className="w-12 h-12 md:w-8 md:h-8" />
                     </div>
                   </div>
 
-                  <div className="px-8">
-                    <div className="text-4xl font-bold text-center">
+                  <div className="px-8 md:px-2 mt-4">
+                    <div className="text-4xl md:text-3xl font-bold text-center">
                       {goals?.home ?? 0} - {goals?.away ?? 0}
                     </div>
                     <p className="text-xs text-center text-gray-500 mt-2">
@@ -91,8 +91,8 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
 
                   <div className="flex-1 text-left">
                     <div className="flex items-center gap-3 mb-2">
-                      <img src={teams.away.logo} alt={teams.away.name} className="w-12 h-12" />
-                      <span className="font-bold text-xl">{teams.away.name}</span>
+                      <img src={teams.away.logo} alt={teams.away.name} className="w-12 h-12 md:w-8 md:h-8" />
+                      <span className="font-bold text-xl leading-none">{teams.away.name}</span>
                     </div>
                   </div>
                 </div>
@@ -161,7 +161,7 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
                       const cardColor = event.detail === 'Yellow Card' || event.detail?.includes('Yellow') ? 'bg-yellow-500' : 'bg-red-500';
                       return <div className={`w-3 h-4 ${cardColor} rounded-sm`}></div>;
                     } else if (event.type === 'Goal') {
-                      return <p className="text-md flex items-center gap-4 font-bold text-red-500">Ghi bàn!
+                      return <p className="text-md md:text-sm flex items-center gap-4 font-bold text-red-500">Ghi bàn!
                         <img src='/icons/banh.svg' alt="goal" className="w-5 h-5" />
                       </p>;
                     }

@@ -8,12 +8,13 @@
             @apply w-5 h-5 mr-3;
         }
     }
+    
 
     .matches-items {
         @apply px-4 font-bold flex items-center justify-between gap-3 h-14 hover:text-line border-t border-line hover:bg-line;
       
         &:nth-child(even) {
-            @apply bg-primary;
+            @apply bg-primary hover:bg-line;
         }
 
         .matches-items--details {
@@ -21,7 +22,7 @@
             .right,
             .left {
                 @apply flex items-center gap-3;
-                width: calc(50% - 60px);
+                width: 50%;
             } 
         } 
     }
@@ -32,10 +33,10 @@
 }
 
 .rankings {
-    @apply relative rounded-xl border border-[#171717] bg-background2 shadow-md overflow-hidden;
+    @apply relative rounded-xl border border-line overflow-hidden;
 
     .rankings-title {
-        @apply p-4 font-bold bg-black flex items-center text-white text-sm;
+        @apply p-4 font-bold bg-gray-200 flex items-center text-sm;
 
         .rankings-title--icon {
             @apply w-5 h-5 mr-3;
@@ -49,13 +50,10 @@
         }
 
         tr {
-            @apply cursor-pointer;
-            &:hover {
-                background-color: #C3CC5A80 !important;
-            }
+            @apply cursor-pointer hover:bg-line; 
 
             &:nth-child(even) {
-                @apply bg-[#171717];
+                @apply bg-primary;
             }
         }
     }

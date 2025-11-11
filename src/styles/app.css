@@ -23,8 +23,9 @@
 @layer base {
   * {
     @apply text-black;
+
+    @apply md:text-sm md:text-[13px];
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
     line-height: 1.2;
   } 
   
@@ -51,10 +52,11 @@
 
   .main-content {
     width: calc(100% - 344px);
+    @apply md:w-full;
   }
 
   .nav-content {
-    @apply relative bg-background3 rounded-2xl overflow-hidden p-4 py-8 w-[320px] border border-line;
+    @apply relative bg-background3 rounded-2xl overflow-hidden p-4 py-8 w-[320px] md:w-full border border-line;
   }
 }
 

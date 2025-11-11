@@ -6,7 +6,7 @@
     }
 
     .slide-item--title {
-        @apply relative text-white text-2xl uppercase font-bold mb-4;
+        @apply relative text-white text-2xl uppercase font-bold mb-4 md:text-xl; 
     }
     
     .slide-item--sub-title {
@@ -14,11 +14,15 @@
     }
 
     .slide-item--content {
-        @apply absolute text-left max-w-7xl z-10 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 pr-[150px];
+        @apply absolute text-left max-w-7xl z-10 left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 pr-[150px] md:px-4;
+        @apply md:left-0 md:-translate-x-0;
     }
 
     .slide-item--backgroup {
-        @apply w-full h-full opacity-90 relative;
+        @apply w-full opacity-90 relative h-[280px];
+        img {
+            @apply h-full object-cover;
+        }
         &::before {
             @apply absolute inset-0 bg-black opacity-50;
             content: "";

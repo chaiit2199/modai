@@ -1,11 +1,11 @@
 .tabs {
     @apply w-full;
     .menu-tabs {
-        @apply relative flex flex-wrap;
+        @apply relative flex flex-wrap gap-4;
     }
 
     .menu-tabs--item {
-        @apply relative mr-4 text-sm transition-colors duration-200 font-bold leading-[2] cursor-pointer;
+        @apply relative text-sm transition-colors duration-200 font-bold leading-[2] cursor-pointer;
         &:last-child {
             @apply mr-0;
         }

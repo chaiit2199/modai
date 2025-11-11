@@ -57,8 +57,13 @@ export default function NewsDetail({ postData, dataSource, cacheAge, newsLatestD
           </div> 
         </div>
         <div className="nav-content">
-            <NewsLatest newsLatestData={newsLatestData} />
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold">Tin tức</h2>
+
+            <Link href="/news" className="hover:underline">Xem tất cả</Link>
           </div>
+          <NewsLatest newsLatestData={newsLatestData} />
+        </div>
       </div>
     </div>
   )

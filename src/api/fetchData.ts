@@ -2,19 +2,29 @@ import { API } from '@/constants/endpoint';
 import http from './http';
 import { ENV } from '@/constants';
 
-const NEXT_PUBLIC_RAPIDAPI_URL = process.env.NEXT_PUBLIC_RAPIDAPI_URL 
-const CORE_API_BASE_URL = ENV.CORE_API_BASE_URL;
+const NEXT_PUBLIC_RAPIDAPI_URL = process.env.NEXT_PUBLIC_RAPIDAPI_URL;
+
+// Use proxy path when on client-side to avoid CORS, direct URL on server-side
+const getCoreApiBaseUrl = () => {
+  // On client-side, use relative path that will be proxied by Next.js
+  // On server-side, use full URL
+  return ENV.NEXT_PUBLIC_CORE_API_BASE_URL;
+};
 
 import axios from 'axios';
 
-const coreApiClient = axios.create({
-  baseURL: CORE_API_BASE_URL,
-  timeout: 10000,
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+// Create axios instance dynamically
+const getCoreApiClient = () => {
+  const baseURL = getCoreApiBaseUrl();
+  return axios.create({
+    baseURL,
+    timeout: 10000,
+    withCredentials: true,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+};
  
 export async function fetchFixturesLive(live: string) {
   try {  
@@ -117,7 +127,8 @@ export async function fetchMatchDetail(fixtureId: string) {
 
 export async function fetchNewsLatest() {
   try {  
-    const url = `${CORE_API_BASE_URL}${API.NEWS.LATEST}`;
+    const coreApiClient = getCoreApiClient();
+    const url = API.NEWS.LATEST;
     const { data } = await coreApiClient.get(url);
  
     return {

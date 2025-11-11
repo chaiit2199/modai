@@ -3,11 +3,11 @@ import { ENV } from '@/constants';
 import axios from 'axios';
 import { saveAuth } from '@/utils/auth';
 
-const CORE_API_BASE_URL = ENV.CORE_API_BASE_URL;
+const NEXT_PUBLIC_CORE_API_BASE_URL = ENV.NEXT_PUBLIC_CORE_API_BASE_URL;
 
 // Create axios instance for CORE_API (different from http which uses API_BASE_URL)
 const coreApiClient = axios.create({
-  baseURL: CORE_API_BASE_URL,
+  baseURL: NEXT_PUBLIC_CORE_API_BASE_URL,
   timeout: 10000,
   withCredentials: true,
   headers: {

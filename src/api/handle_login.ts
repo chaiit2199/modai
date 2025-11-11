@@ -3,23 +3,29 @@ import { ENV } from '@/constants';
 import axios from 'axios';
 import { saveAuth } from '@/utils/auth';
 
-const CORE_API_BASE_URL = ENV.CORE_API_BASE_URL
+// Use proxy path when on client-side to avoid CORS, direct URL on server-side
+const getCoreApiBaseUrl = () => {
+  // On server-side, use full URL
+  return ENV.NEXT_PUBLIC_CORE_API_BASE_URL || 'http://localhost:4000';
+};
 
-console.log(ENV.CORE_API_BASE_URL);
-
-// Create axios instance for CORE_API (different from http which uses API_BASE_URL)
-const coreApiClient = axios.create({
-  baseURL: CORE_API_BASE_URL,
-  timeout: 30000, // 30 seconds
-  withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+// Create axios instance dynamically to handle both client and server-side
+const getCoreApiClient = () => {
+  const baseURL = getCoreApiBaseUrl();
+  return axios.create({
+    baseURL,
+    timeout: 30000, // 30 seconds
+    withCredentials: true,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+};
  
 export async function handleLogin(username: string, password: string) {
   try {  
     const url = API.USER.LOGIN;
+    const coreApiClient = getCoreApiClient();
     const { data } = await coreApiClient.post(url, {
       username,
       password,
@@ -60,6 +66,7 @@ export async function handleLogin(username: string, password: string) {
 export async function handleRegister(username: string, email: string, password: string) {
   try {  
     const url = API.USER.REGISTER;
+    const coreApiClient = getCoreApiClient();
     const { data } = await coreApiClient.post(url, {
       username,
       email,
@@ -96,6 +103,7 @@ export async function handleRegister(username: string, email: string, password: 
 export async function handleForgotPassword(username: string, email: string) {
   try {  
     const url = API.USER.FORGOT_PASSWORD;
+    const coreApiClient = getCoreApiClient();
     const { data } = await coreApiClient.post(url, {
       username,
       email,
@@ -131,6 +139,7 @@ export async function handleForgotPassword(username: string, email: string) {
 export async function handleResetPassword(reset_token: string, password: string) {
   try {  
     const url = API.USER.RESET_PASSWORD;
+    const coreApiClient = getCoreApiClient();
     const { data } = await coreApiClient.post(url, {
       reset_token,
       password,
@@ -174,6 +183,7 @@ export async function handleResetPassword(reset_token: string, password: string)
 export async function refreshAccessToken() {
   try {
     const url = API.USER.REFRESH_TOKEN;
+    const coreApiClient = getCoreApiClient();
     const { data } = await coreApiClient.post(url);
 
     // Check if refresh is successful
@@ -203,6 +213,7 @@ export async function refreshAccessToken() {
 export async function handleGetAllPosts() {
   try {
     let url = API.NEWS.ALL;
+    const coreApiClient = getCoreApiClient();
     const { data } = await coreApiClient.get(url);
     if (data && data.code === API_SUCCESS) {
       return {
@@ -234,6 +245,7 @@ export async function handleGetAllPosts() {
 export async function handleGetPostById(postId: string | number) {
   try {
     const url = `${API.NEWS.DETAIL}/${postId}`;
+    const coreApiClient = getCoreApiClient();
     const { data } = await coreApiClient.get(url);
     
     if (data && data.code === API_SUCCESS) {
@@ -279,6 +291,7 @@ export async function createPost(postData: any, accessToken?: string, username?:
       requestData.email = email;
     }
     
+    const coreApiClient = getCoreApiClient();
     const { data } = await coreApiClient.post(url, requestData);
     
     if (data && data.code === API_SUCCESS) {
@@ -329,6 +342,7 @@ export async function updatePost(postId: string | number, postData: any, accessT
     }
     
     // Use POST method instead of PUT to avoid CORS issues
+    const coreApiClient = getCoreApiClient();
     const { data } = await coreApiClient.put(url, requestData);
     
     if (data && data.code === API_SUCCESS) {
@@ -375,6 +389,7 @@ export async function deletePost(postId: string | number, accessToken?: string, 
       requestData.email = email;
     }
     
+    const coreApiClient = getCoreApiClient();
     const { data } = await coreApiClient.delete(url, { data: requestData });
     
     if (data && data.code === API_SUCCESS) {

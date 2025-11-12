@@ -15,7 +15,7 @@
     }
 
     .header-right {
-        @apply flex items-center gap-6 py-6 pl-6;
+        @apply flex items-center gap-6 py-4 pl-6;
 
         >button {
             @apply relative;

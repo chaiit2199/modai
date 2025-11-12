@@ -28,6 +28,10 @@
     font-family: 'Inter', sans-serif;
     line-height: 1.2;
   } 
+
+  input {
+    @apply text-base;
+  }
   
   *:focus-visible {
     outline: none !important;

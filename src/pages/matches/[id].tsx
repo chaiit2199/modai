@@ -224,7 +224,7 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
 
                           {/* Time column - center */}
                           <div className="w-10 h-10 rounded-full bg-gray-200  flex items-center justify-center">
-                            <span className="text-sm font-semibold">
+                            <span className="text-xs font-semibold">
                               {time.elapsed}'{time.extra ? `+${time.extra}` : ''}
                             </span>
                           </div>

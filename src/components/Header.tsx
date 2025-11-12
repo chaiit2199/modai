@@ -181,7 +181,7 @@ export default function Header() {
                   return (
                     <li 
                       key={item.id}
-                      className="relative py-6"
+                      className="relative py-4"
                       onMouseEnter={() => hasSubmenu && setHoveredMenu(item.id)}
                       onMouseLeave={() => setHoveredMenu(null)}
                     >
@@ -282,8 +282,8 @@ export default function Header() {
                       )}
                     </div>
                   ) : (
-                    <Link href="/auth/login">
-                      <img src="/icons/login.svg" alt="Login" className="w-6 h-6" />
+                    <Link href="/auth/login" className="font-semibold">
+                      Đăng nhập
                     </Link>
                   )}
 

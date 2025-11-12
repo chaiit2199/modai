@@ -25,7 +25,7 @@ export default function PageTitle() {
               <p className="slide-item--sub-title">Theo dõi tỉ số trực tiếp, kết quả trận đấu và tin tức nóng hổi từ khắp các giải đấu lớn: Premier League, Champions League, La Liga và hơn thế nữa.</p>
             </div>
             <div className="slide-item--backgroup">
-              <img src="/images/banner/banner-1.jpg" alt="Slide Image" className='w-full'/>
+              <img src="/images/banner/banner-1.png" alt="Slide Image" className='w-full'/>
             </div>
           </div>
         </SwiperSlide>

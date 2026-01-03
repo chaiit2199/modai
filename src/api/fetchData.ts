@@ -1,4 +1,4 @@
-import { API } from '@/constants/endpoint';
+import { API, API_SUCCESS } from '@/constants/endpoint';
 import http from './http';
 import { ENV } from '@/constants';
 
@@ -131,24 +131,43 @@ export async function fetchNewsLatest() {
     const url = API.NEWS.LATEST;
     const { data } = await coreApiClient.get(url);
  
-    return {
-      success: true,
-      data: data,
-    };
+    // Kiểm tra cấu trúc response giống handleGetAllPosts
+    if (data && data.code === API_SUCCESS) {
+      return {
+        success: true,
+        data: data.data || data.response || data,
+      };
+    } else if (data) {
+      // Nếu không có code hoặc code khác, vẫn trả về data
+      return {
+        success: true,
+        data: data.data || data.response || data,
+      };
+    } else {
+      return {
+        success: false,
+        message: 'Không có dữ liệu trả về',
+      };
+    }
   } catch (error: unknown) {
-    console.error(error);
+    console.error('Error fetching news latest:', error);
 
     if (typeof error === 'object' && error !== null && 'response' in error) {
-      const anyError = error as { response?: { data?: { errorCode?: string } } };
+      const anyError = error as { response?: { data?: { message?: string; errorCode?: string } } };
+      const errorMessage = anyError.response?.data?.message;
       const errorCode = anyError.response?.data?.errorCode;
+      if (errorMessage) {
+        console.error('API error message:', errorMessage);
+      }
       if (errorCode) {
-        console.error('API error:', errorCode);
+        console.error('API error code:', errorCode);
       }
     } else {
-      console.error('FetchMatchDetail Request Error');
+      console.error('FetchNewsLatest Request Error');
     }
     return {
       success: false,
+      message: 'Có lỗi xảy ra khi lấy tin tức mới nhất',
     };
   }
 } 

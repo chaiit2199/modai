@@ -15,7 +15,8 @@
     }
 
     .header-right {
-        @apply flex items-center gap-6 py-4 pl-6;
+        @apply flex items-center gap-6 py-4 pl-6 h-16;
+        @apply h-[64px];
 
         >button {
             @apply relative;

@@ -111,17 +111,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   let newsLatestData = cache.get<any[]>(newsCacheKey);
   
   if (!newsLatestData) {
-    const { success, data: response } = await fetchNewsLatest();
+    const result = await fetchNewsLatest();
     
-    if (success && response) {
-      // Handle different possible data structures
-      const data = response?.data || response?.response || response || [];
+    if (result.success && result.data) {
+      // result.data đã được parse đúng từ fetchNewsLatest
+      const data = result.data;
       newsLatestData = Array.isArray(data) ? data : [];
       // Cache for 1 minute (60000 milliseconds)
       cache.set(newsCacheKey, newsLatestData, 60000);
+      console.log('✅ Fetched and cached NEWS_LATEST:', newsLatestData.length, 'items');
     } else {
+      console.warn('⚠️ Failed to fetch NEWS_LATEST:', result.message || 'Unknown error');
       newsLatestData = [];
     }
+  } else {
+    console.log('✅ Using cached NEWS_LATEST:', newsLatestData.length, 'items');
   } 
 
   return {

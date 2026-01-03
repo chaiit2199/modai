@@ -3,15 +3,19 @@
 @theme {
   /* Reset tất cả breakpoints mặc định */
   --breakpoint-*: initial;
+  
+  /* Light theme colors (default) */
   --color-background: #fafafa;
   --color-background2: #2C2C2C;
   --color-background3: #ffffff;
   --color-active: #C3CC5A;
   --color-line: #F0F0F0;
   --color-primary: #F8F8F8;
-  --color-line: #F0F0F0;
   --color-main: #F5F5F5;
+  --color-text: #000000;
+  --color-text-secondary: #666666;
 }
+ 
 
 /* Desktop-first: định nghĩa breakpoints với max-width */
 @custom-variant xl (@media (max-width: 1280px));
@@ -22,7 +26,7 @@
 
 @layer base {
   * {
-    @apply text-black;
+    color: var(--color-text);
 
     @apply md:text-sm md:text-[13px];
     font-family: 'Inter', sans-serif;
@@ -45,6 +49,7 @@
     @apply w-full px-4;
   }
 
+  html,
   body {
     @apply w-full h-full relative bg-background;
   }

@@ -1,7 +1,8 @@
 import { useState } from "react"
 import { useRouter } from "next/router"
 import { User, getToken } from "@/utils/auth"
-import { updatePost, deletePost } from "@/api/handle_login"
+import { updatePost, deletePost, handleGetAllPosts } from "@/api/handle_login"
+import { fetchNewsLatest } from "@/api/fetchData"
 import { cache } from "@/utils/cache"
 import { CACHE_KEYS } from "@/constants/endpoint"
 import { Button } from "@/components/ui/button"
@@ -74,10 +75,43 @@ export default function PostsManagement({ postsData, user }: PostsManagementProp
       const result = await updatePost(postId, formData, token || undefined, username, email);
       
       if (result.success) {
-        // Clear cache and refresh data
+        // Xóa tất cả cache liên quan đến tin tức
         cache.clear(CACHE_KEYS.POSTS_ALL());
-        // Refresh page to get updated data
-        router.reload();
+        cache.clear(CACHE_KEYS.NEWS_LATEST());
+        // Xóa cache chi tiết bài viết đã được update (có thể dùng id hoặc search)
+        cache.clear(CACHE_KEYS.POST_DETAIL(postId.toString()));
+        if (selectedPost.search) {
+          cache.clear(CACHE_KEYS.POST_DETAIL(selectedPost.search));
+        }
+        
+        // Fetch lại và cập nhật cache ngay lập tức
+        try {
+          // Fetch lại danh sách posts và cập nhật cache
+          const postsResult = await handleGetAllPosts();
+          if (postsResult.success && postsResult.data) {
+            const data = postsResult.data?.data || postsResult.data?.response || postsResult.data || [];
+            const postsList = Array.isArray(data) ? data : [];
+            cache.set(CACHE_KEYS.POSTS_ALL(), postsList, 60000);
+            console.log('✅ Cache POSTS_ALL đã được cập nhật sau khi update:', postsList.length, 'bài viết');
+          }
+          
+          // Fetch lại tin tức mới nhất và cập nhật cache
+          const newsResult = await fetchNewsLatest();
+          if (newsResult.success && newsResult.data) {
+            const newsData = newsResult.data;
+            const newsList = Array.isArray(newsData) ? newsData : [];
+            cache.set(CACHE_KEYS.NEWS_LATEST(), newsList, 60000);
+            console.log('✅ Cache NEWS_LATEST đã được cập nhật sau khi update:', newsList.length, 'tin tức');
+          }
+        } catch (cacheError) {
+          console.error('❌ Error updating cache:', cacheError);
+        }
+        
+        // Đóng modal và refresh page
+        handleCloseModal();
+        setTimeout(() => {
+          router.reload();
+        }, 500);
       } else {
         setError(result.message || 'Có lỗi xảy ra khi cập nhật');
       }
@@ -105,10 +139,42 @@ export default function PostsManagement({ postsData, user }: PostsManagementProp
       const result = await deletePost(postId, token || undefined, username, email);
       
       if (result.success) {
-        // Clear cache and refresh data
+        // Xóa tất cả cache liên quan đến tin tức
         cache.clear(CACHE_KEYS.POSTS_ALL());
+        cache.clear(CACHE_KEYS.NEWS_LATEST());
+        // Xóa cache chi tiết bài viết đã bị xóa (có thể dùng id hoặc search)
+        cache.clear(CACHE_KEYS.POST_DETAIL(postId.toString()));
+        if (post.search) {
+          cache.clear(CACHE_KEYS.POST_DETAIL(post.search));
+        }
+        
+        // Fetch lại và cập nhật cache ngay lập tức
+        try {
+          // Fetch lại danh sách posts và cập nhật cache
+          const postsResult = await handleGetAllPosts();
+          if (postsResult.success && postsResult.data) {
+            const data = postsResult.data?.data || postsResult.data?.response || postsResult.data || [];
+            const postsList = Array.isArray(data) ? data : [];
+            cache.set(CACHE_KEYS.POSTS_ALL(), postsList, 60000);
+            console.log('✅ Cache POSTS_ALL đã được cập nhật sau khi delete:', postsList.length, 'bài viết');
+          }
+          
+          // Fetch lại tin tức mới nhất và cập nhật cache
+          const newsResult = await fetchNewsLatest();
+          if (newsResult.success && newsResult.data) {
+            const newsData = newsResult.data;
+            const newsList = Array.isArray(newsData) ? newsData : [];
+            cache.set(CACHE_KEYS.NEWS_LATEST(), newsList, 60000);
+            console.log('✅ Cache NEWS_LATEST đã được cập nhật sau khi delete:', newsList.length, 'tin tức');
+          }
+        } catch (cacheError) {
+          console.error('❌ Error updating cache:', cacheError);
+        }
+        
         // Refresh page to get updated data
-        router.reload();
+        setTimeout(() => {
+          router.reload();
+        }, 500);
       } else {
         setError(result.message || 'Có lỗi xảy ra khi xóa');
         setIsLoading(false);

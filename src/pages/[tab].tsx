@@ -1,4 +1,3 @@
-import { useState, useEffect, useMemo } from "react";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useDevice } from '@/context/DeviceContext';
@@ -13,7 +12,7 @@ import { cache } from "@/utils/cache";
 import { CACHE_KEYS } from "@/constants/endpoint"; 
 import NewsLatest from "@/components/News/NewsLatest";
 import Link from "next/link";
-
+import { useState, useEffect, useMemo } from "react";
 
 const tabMenu = [
   {
@@ -81,29 +80,44 @@ const tabTournament = [
   }
 ];
 
-interface HomeProps {
+interface TabPageProps {
   fixturesLiveData: any[];
   newsLatestData: any[];
 }
 
-export default function Home({ fixturesLiveData, newsLatestData }: HomeProps) {
+export default function TabPage({ fixturesLiveData, newsLatestData }: TabPageProps) {
   const {isMobile} = useDevice();
   const router = useRouter();
+  const tabParam = router.query.tab as string;
   
-  // Route / luôn là tab đầu tiên (id = "")
-  const [activeTab] = useState(tabMenu[0].id); // Luôn là tab đầu tiên cho route /
+  // Lấy activeTab từ URL, nếu null hoặc không hợp lệ thì dùng tab đầu tiên
+  const activeTab = useMemo(() => {
+    if (tabParam && tabMenu.some(tab => tab.id === tabParam)) {
+      return tabParam;
+    }
+    return tabMenu[0].id; // Mặc định tab đầu tiên
+  }, [tabParam]);
+  
   const [activeTabTournament, setActiveTabTournament] = useState(tabTournament[0].id);
 
   // Hàm xử lý khi click tab - push route
   const handleTabChange = (id: string) => {
-    // Nếu id rỗng thì push về /, ngược lại push về /id
-    const targetRoute = id === "" ? "/" : `/${id}`;
-    if (router.pathname !== targetRoute) {
+    if (id !== activeTab) {
+      // Nếu id rỗng thì push về /, ngược lại push về /id
+      const targetRoute = id === "" ? "/" : `/${id}`;
       router.push(targetRoute, undefined, { scroll: false });
     }
   };
 
-  if (isMobile == undefined) return; 
+  // Redirect nếu tab không hợp lệ về tab đầu tiên
+  useEffect(() => {
+    if (tabParam && !tabMenu.some(tab => tab.id === tabParam)) {
+      // Tab đầu tiên có id rỗng, redirect về /
+      router.replace("/");
+    }
+  }, [tabParam, router]);
+
+  if (isMobile == undefined) return;
 
   return (
     <div className="container my-8">
@@ -163,7 +177,7 @@ export default function Home({ fixturesLiveData, newsLatestData }: HomeProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   const liveParam = "all";
   const fixturesCacheKey = CACHE_KEYS.FIXTURES_LIVE(liveParam);
   const newsCacheKey = CACHE_KEYS.NEWS_LATEST();
@@ -208,3 +222,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
     },
   };
 }
+

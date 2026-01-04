@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 import Matches from './Matches/Matches';
 
-export default function RankingsComponent() {
+export default function StandingsComponent() {
   return (
     <div className='rankings'>
         <h5 className='rankings-title'> 

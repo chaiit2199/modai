@@ -92,7 +92,6 @@ export default function PostsManagement({ postsData, user }: PostsManagementProp
             const data = postsResult.data?.data || postsResult.data?.response || postsResult.data || [];
             const postsList = Array.isArray(data) ? data : [];
             cache.set(CACHE_KEYS.POSTS_ALL(), postsList, 60000);
-            console.log('✅ Cache POSTS_ALL đã được cập nhật sau khi update:', postsList.length, 'bài viết');
           }
           
           // Fetch lại tin tức mới nhất và cập nhật cache
@@ -101,7 +100,6 @@ export default function PostsManagement({ postsData, user }: PostsManagementProp
             const newsData = newsResult.data;
             const newsList = Array.isArray(newsData) ? newsData : [];
             cache.set(CACHE_KEYS.NEWS_LATEST(), newsList, 60000);
-            console.log('✅ Cache NEWS_LATEST đã được cập nhật sau khi update:', newsList.length, 'tin tức');
           }
         } catch (cacheError) {
           console.error('❌ Error updating cache:', cacheError);
@@ -156,7 +154,6 @@ export default function PostsManagement({ postsData, user }: PostsManagementProp
             const data = postsResult.data?.data || postsResult.data?.response || postsResult.data || [];
             const postsList = Array.isArray(data) ? data : [];
             cache.set(CACHE_KEYS.POSTS_ALL(), postsList, 60000);
-            console.log('✅ Cache POSTS_ALL đã được cập nhật sau khi delete:', postsList.length, 'bài viết');
           }
           
           // Fetch lại tin tức mới nhất và cập nhật cache
@@ -165,7 +162,6 @@ export default function PostsManagement({ postsData, user }: PostsManagementProp
             const newsData = newsResult.data;
             const newsList = Array.isArray(newsData) ? newsData : [];
             cache.set(CACHE_KEYS.NEWS_LATEST(), newsList, 60000);
-            console.log('✅ Cache NEWS_LATEST đã được cập nhật sau khi delete:', newsList.length, 'tin tức');
           }
         } catch (cacheError) {
           console.error('❌ Error updating cache:', cacheError);

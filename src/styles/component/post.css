@@ -4,6 +4,40 @@
             @apply w-full rounded-xl overflow-hidden mb-3;
         }
 
+        .post-image-placeholder {
+            @apply w-full rounded-xl mb-2;
+            @apply flex items-center justify-center;
+            @apply bg-white;
+            @apply min-h-[150px] p-4 shadow-md;
+
+            
+            .post-date-card {
+                @apply flex flex-col items-center justify-center;
+                @apply w-full text-center;
+            }
+            
+            .post-date-label {
+                @apply text-slate-400 text-xs uppercase tracking-wider;
+                @apply font-sans mb-4;
+            }
+            
+            .post-date-main {
+                @apply text-slate-900 font-bold text-2xl;
+                @apply font-serif mb-4;
+                @apply leading-tight;
+            }
+            
+            .post-date-divider {
+                @apply w-12 h-px bg-slate-300;
+                @apply mx-auto;
+            }
+            
+            .post-date-tagline {
+                @apply text-slate-400 text-xs;
+                @apply font-sans tracking-wide;
+            }
+        }
+
         .post-title {
             @apply font-semibold mb-2 text-lg
 ;
@@ -25,6 +59,40 @@
         .post-image {
             @apply rounded-xl overflow-hidden h-[80px] object-cover w-full;
             max-width: 100px;
+        }
+
+        .post-image-placeholder {
+            @apply rounded-xl overflow-hidden h-[80px] w-full;
+            @apply max-w-[100px] flex items-center justify-center;
+            @apply bg-white shadow-md;
+            @apply p-2;
+            
+            .post-date-card {
+                @apply flex flex-col items-center justify-center;
+                @apply w-full text-center;
+            }
+            
+            .post-date-label {
+                @apply text-slate-400 text-[10px] uppercase tracking-wider;
+                @apply font-sans mb-1;
+            }
+            
+            .post-date-main {
+                @apply text-slate-900 font-bold text-sm;
+                @apply font-serif mb-1;
+                @apply leading-tight;
+            }
+            
+            .post-date-divider {
+                @apply w-6 h-px bg-slate-300;
+                @apply mx-auto mb-1;
+            }
+            
+            .post-date-tagline {
+                @apply text-slate-400 text-[8px];
+                @apply font-sans tracking-wide;
+                @apply leading-tight;
+            }
         }
 
         .post-content {

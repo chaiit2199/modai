@@ -171,26 +171,28 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
-  // Fetch news data
-  let newsLatestData = cache.get<any[]>(newsCacheKey);
+  // Fetch news data - Cache 10 phút
+  const TEN_MINUTES_MS = 10 * 60 * 1000; // 600000 milliseconds
+  const newsCacheResult = cache.getWithInfo<any[]>(newsCacheKey);
+  let newsLatestData: any[] = [];
   
-  if (!newsLatestData) {
+  if (newsCacheResult) {
+    // Có cache, sử dụng cache - không fetch từ API
+    newsLatestData = newsCacheResult.data || [];
+    const cacheAgeSeconds = Math.round(newsCacheResult.age / 1000);
+  } else {
     const result = await fetchNewsLatest();
     
     if (result.success && result.data) {
       // result.data đã được parse đúng từ fetchNewsLatest
       const data = result.data;
       newsLatestData = Array.isArray(data) ? data : [];
-      // Cache for 1 minute (60000 milliseconds)
-      cache.set(newsCacheKey, newsLatestData, 60000);
-      console.log('✅ Fetched and cached NEWS_LATEST:', newsLatestData.length, 'items');
+      // Cache for 10 minutes
+      cache.set(newsCacheKey, newsLatestData, TEN_MINUTES_MS);
     } else {
-      console.warn('⚠️ Failed to fetch NEWS_LATEST:', result.message || 'Unknown error');
       newsLatestData = [];
     }
-  } else {
-    console.log('✅ Using cached NEWS_LATEST:', newsLatestData.length, 'items');
-  } 
+  }
 
   return {
     props: {

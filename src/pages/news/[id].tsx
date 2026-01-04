@@ -16,10 +16,6 @@ interface NewsDetailProps {
 } 
 
 export default function NewsDetail({ postData, dataSource, cacheAge, newsLatestData }: NewsDetailProps) {
-
-  console.log('Post data:', postData);
-  console.log('Data source:', dataSource);
-  console.log('Cache age:', cacheAge);
   
   if (!postData) {
     return (
@@ -29,7 +25,7 @@ export default function NewsDetail({ postData, dataSource, cacheAge, newsLatestD
   
   return (
     <div className="container my-8">
-      <div className="bg-background3 rounded-t-2xl overflow-hidden border border-line mb-6">
+      <div className="bg-background3 rounded-2xl overflow-hidden border border-line mb-6">
         <Metadata title={postData.title || "News"} />
         <Link href="/news" className="p-4 flex items-center gap-3 border-b-[0.5px] border-background bg-background3 rounded-t-xl overflow-hidden">
             <img src='/icons/back.svg' alt="Back" className="w-3 h-3 mr-[2px] mt-[2px]" />
@@ -43,7 +39,7 @@ export default function NewsDetail({ postData, dataSource, cacheAge, newsLatestD
           />
         )}
       </div>
-      <div className="flex gap-6 flex-col">
+      <div className="flex gap-6">
         <div className="main-content">  
           
           <div className="bg-background3 rounded-2xl overflow-hidden px-4 pb-8 border border-line"> 
@@ -87,7 +83,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const cacheResult = cache.getWithInfo<any>(cacheKey);
   let postData: any | null = null;
   let dataSource: 'cache' | 'api' = 'api';
-  let cacheAge: number | undefined;
+  let cacheAge: number | null = null;
   
   if (!cacheResult) {
     // Fetch from API if not in cache
@@ -96,43 +92,52 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (result.success && result.data) {
       const data = result.data?.data || result.data?.response || result.data;
       postData = data;
-      cache.set(cacheKey, postData, 60000); // Cache for 1 minute
+      cache.set(cacheKey, postData, 10 * 60 * 1000); // Cache for 10 minutes
       dataSource = 'api';
+      cacheAge = 0; // Vừa mới cache, age = 0
     } else {
       postData = null;
       dataSource = 'api';
+      cacheAge = null; // Không có data, không có cache age
     }
   } else {
     postData = cacheResult.data;
     cacheAge = Math.round(cacheResult.age / 1000); // Convert to seconds
     dataSource = 'cache';
-  }
+    const cacheCreatedAt = new Date(cacheResult.timestamp).toLocaleString('vi-VN');
+    const cacheAgeMinutes = Math.floor(cacheAge / 60);
+    const cacheAgeSeconds = cacheAge % 60;
+   }
 
-  let newsLatestData = cache.get<any[]>(newsCacheKey);
+  // Fetch news data - Cache 10 phút
+  const TEN_MINUTES_MS = 10 * 60 * 1000; // 600000 milliseconds
+  const newsCacheResult = cache.getWithInfo<any[]>(newsCacheKey);
+  let newsLatestData: any[] = [];
   
-  if (!newsLatestData) {
+  if (newsCacheResult) {
+    // Có cache, sử dụng cache - không fetch từ API
+    newsLatestData = newsCacheResult.data || [];
+    const cacheAgeSeconds = Math.round(newsCacheResult.age / 1000);
+  } else {
+    // Không có cache hoặc cache đã hết hạn, fetch từ API
     const result = await fetchNewsLatest();
     
     if (result.success && result.data) {
       // result.data đã được parse đúng từ fetchNewsLatest
       const data = result.data;
       newsLatestData = Array.isArray(data) ? data : [];
-      // Cache for 1 minute (60000 milliseconds)
-      cache.set(newsCacheKey, newsLatestData, 60000);
-      console.log('✅ Fetched and cached NEWS_LATEST:', newsLatestData.length, 'items');
+      // Cache for 10 minutes
+      cache.set(newsCacheKey, newsLatestData, TEN_MINUTES_MS);
     } else {
-      console.warn('⚠️ Failed to fetch NEWS_LATEST:', result.message || 'Unknown error');
       newsLatestData = [];
     }
-  } else {
-    console.log('✅ Using cached NEWS_LATEST:', newsLatestData.length, 'items');
   } 
 
   return {
     props: {
       postData: postData || null,
       dataSource,
-      cacheAge: cacheAge ?? null,
+      cacheAge,
       postId,
       newsLatestData: newsLatestData || [],
     },

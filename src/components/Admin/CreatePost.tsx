@@ -68,10 +68,7 @@ export default function CreatePost({ user }: CreatePostProps) {
             const postsList = Array.isArray(data) ? data : [];
             // Cập nhật cache với danh sách mới ngay lập tức (TTL 1 phút)
             cache.set(CACHE_KEYS.POSTS_ALL(), postsList, 60000);
-            console.log('✅ Cache POSTS_ALL đã được cập nhật với', postsList.length, 'bài viết');
-          } else {
-            console.warn('⚠️ Không thể fetch posts để update cache');
-          }
+          } 
           
           // Fetch lại tin tức mới nhất và cập nhật cache
           const newsResult = await fetchNewsLatest();
@@ -81,13 +78,9 @@ export default function CreatePost({ user }: CreatePostProps) {
             const newsList = Array.isArray(newsData) ? newsData : [];
             // Cập nhật cache tin tức mới nhất ngay lập tức (TTL 1 phút)
             cache.set(CACHE_KEYS.NEWS_LATEST(), newsList, 60000);
-            console.log('✅ Cache NEWS_LATEST đã được cập nhật với', newsList.length, 'tin tức');
-          } else {
-            console.warn('⚠️ Không thể fetch news để update cache:', newsResult.message || 'Unknown error');
-          }
+          } 
         } catch (cacheError) {
           console.error('❌ Error updating cache:', cacheError);
-          // Nếu lỗi khi update cache, đã clear cache ở trên nên sẽ force reload từ API khi reload page
         }
         
         // Refresh page after 1 second to show new post

@@ -14,9 +14,6 @@ interface NewsProps {
 export default function News({ postsData: initialPostsData }: NewsProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [postsData] = useState(initialPostsData);
-
-  console.log(postsData);
-  
   return (
     <div className="container my-8 px-0 bg-background3 rounded-2xl overflow-hidden border border-line">
         <Metadata title="News" />
@@ -49,8 +46,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (result.success && result.data) {
       const data = result.data?.data || result.data?.response || result.data || [];
       postsData = Array.isArray(data) ? data : [];
-      // Cache for 1 minute (60000 milliseconds)
-      cache.set(cacheKey, postsData, 60000);
+      // Cache for 10 minutes (600000 milliseconds)
+      cache.set(cacheKey, postsData, 10 * 60 * 1000);
     } else {
       postsData = [];
     }

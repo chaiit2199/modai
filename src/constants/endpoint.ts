@@ -33,4 +33,5 @@ export const CACHE_KEYS = {
   NEWS_LATEST: () => 'news_latest',
   POSTS_ALL: () => 'posts_all',
   POST_DETAIL: (postId: string) => `post-detail-${postId}`,
+  LEAGUES: () => 'leagues',
 } as const;

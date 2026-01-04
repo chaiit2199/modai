@@ -4,15 +4,13 @@ import { ENV } from '@/constants/';
 import { getToken, clearAuth } from '@/utils/auth';
 import { refreshAccessToken } from './handle_login';
 
-const rapidApiHost = ENV.NEXT_PUBLIC_RAPIDAPI_HOST;
 const rapidApiKey = ENV.NEXT_PUBLIC_RAPIDAPI_KEY;
 
 const http = axios.create({
   baseURL: ENV.API_BASE_URL,
 
   headers: {
-    'x-rapidapi-host': rapidApiHost,
-    'x-rapidapi-key': rapidApiKey,
+    'x-apisports-key': rapidApiKey,
   },
 });
 

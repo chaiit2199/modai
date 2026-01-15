@@ -7,6 +7,8 @@ interface CacheEntry<T> {
 
 class Cache {
   private cache: Map<string, CacheEntry<any>> = new Map();
+  // Track ongoing fetches to prevent duplicate API calls
+  private pendingFetches: Map<string, Promise<any>> = new Map();
 
   set<T>(key: string, data: T, ttl: number = 120000): void {
     // Default TTL is 60 seconds (1 minute)
@@ -110,6 +112,50 @@ class Cache {
       age,
       ttl: entry.ttl,
     };
+  }
+
+  /**
+   * Execute a fetch function with deduplication
+   * If multiple requests try to fetch the same key simultaneously,
+   * only one fetch will execute and others will wait for the result
+   */
+  async fetchWithDeduplication<T>(
+    key: string,
+    fetchFn: () => Promise<T>,
+    ttl: number = 120000
+  ): Promise<T> {
+    // Check cache first
+    const cached = this.get<T>(key);
+    if (cached !== null) {
+      return cached;
+    }
+
+    // Check if there's already a pending fetch for this key
+    const pendingFetch = this.pendingFetches.get(key);
+    if (pendingFetch) {
+      // Wait for the existing fetch to complete
+      return pendingFetch as Promise<T>;
+    }
+
+    // Start new fetch
+    const fetchPromise = fetchFn()
+      .then((data) => {
+        // Cache the result
+        this.set(key, data, ttl);
+        // Remove from pending fetches
+        this.pendingFetches.delete(key);
+        return data;
+      })
+      .catch((error) => {
+        // Remove from pending fetches on error
+        this.pendingFetches.delete(key);
+        throw error;
+      });
+
+    // Store the pending fetch
+    this.pendingFetches.set(key, fetchPromise);
+
+    return fetchPromise;
   }
 }
 

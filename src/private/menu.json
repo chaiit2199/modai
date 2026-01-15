@@ -13,25 +13,9 @@
     {
       "id": 3,
       "label": "Về chúng tôi",
-      "href": "/about",
-      "submenu": [
-        {
-          "id": 31,
-          "label": "Web Development",
-          "href": "/services/web-development"
-        },
-        {
-          "id": 32,
-          "label": "Mobile App",
-          "href": "/services/mobile-app"
-        },
-        {
-          "id": 33,
-          "label": "Consulting",
-          "href": "/services/consulting"
-        }
-      ]
+      "href": "/about"
     }
   ]
 }
 
+ 

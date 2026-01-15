@@ -8,8 +8,7 @@ interface FixturesLiveProps {
 }
 
 export default function FixturesLive({ fixturesData }: FixturesLiveProps) {
-    if(fixturesData.length === 0) return <p>Loading...</p>
-
+    if(fixturesData.length === 0) return <p className="py-8 text-center text-gray-500">Chưa tìm thấy trận đấu nào phù hợp</p>
 
     return (
         <div className='flex flex-col gap-6'>

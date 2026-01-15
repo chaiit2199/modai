@@ -4,22 +4,39 @@ import Link from 'next/link'
 
 import Matches from './Matches/Matches';
 
-export default function StandingsComponent() {
+interface StandingsComponentProps {
+  standingsData?: any;
+}
+
+export default function StandingsComponent({ standingsData }: StandingsComponentProps) {
+  // Lấy standings array từ data
+  const standings = standingsData?.standings?.[0] || standingsData?.standings || [];
+  const leagueName = standingsData?.name || standingsData?.league?.name || 'Premier League';
+  const leagueLogo = standingsData?.logo || standingsData?.league?.logo || '/images/match/team1-copyright.png';
+  const country = standingsData?.country || standingsData?.league?.country || 'England';
+
   return (
     <div className='rankings'>
         <h5 className='rankings-title'> 
-            <img src="/images/match/team1-copyright.png" alt="National" className="rankings-title--icon"/>
-            Anh - Premier League
+            <img 
+              src={leagueLogo} 
+              alt={leagueName} 
+              className="rankings-title--icon"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/images/match/team1-copyright.png';
+              }}
+            />
+            {country} - {leagueName}
         </h5>
          <table className='matches-table'>
             <colgroup span={1}>
               <col width="2" />
-              <col width="20" />
+              <col width="18" />
               <col width="4" />
               <col width="4" />
               <col width="4" />
               <col width="4" />
-              <col width="4" />
+              <col width="6" />
               <col width="4" />
               <col width="4" />
             </colgroup>
@@ -37,76 +54,56 @@ export default function StandingsComponent() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                  <td>1</td>
-                  <td>
-                    <div className="flex items-center">
-                      <img src="/images/match/8600_xsmall.png" alt="National" className="w-5 h-5 mr-3"/>
-                      Anh - Premier League
-                    </div>
-                  </td>
-                  <td>3</td>
-                  <td>3</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>13-3</td>
-                  <td>+10</td>
-                  <td>9</td>
-              </tr>
+              {standings.length > 0 ? (
+                standings.map((team: any, index: number) => {
+                  const rank = team.rank || team.position || index + 1;
+                  const teamName = team.team?.name || 'N/A';
+                  const teamLogo = team.team?.logo || '/images/match/team1-copyright.png';
+                  const played = team.all?.played || team.played || 0;
+                  const win = team.all?.win || team.win || 0;
+                  const draw = team.all?.draw || team.draw || 0;
+                  const lose = team.all?.lose || team.lost || 0;
+                  const goalsFor = team.all?.goals?.for || team.goalsFor || 0;
+                  const goalsAgainst = team.all?.goals?.against || team.goalsAgainst || 0;
+                  const goalsDiff = team.goalsDiff || (goalsFor - goalsAgainst);
+                  const points = team.points || 0;
 
-              <tr>
-                  <td>2</td>
-                  <td>
-                    <div className="flex items-center">
-                      <img src="/images/match/9789_xsmall.png" alt="National" className="w-5 h-5 mr-3"/>
-                      Anh - Premier League
-                    </div>
+                  return (
+                    <tr key={team.team?.id || index}>
+                      <td>{rank}</td>
+                      <td>
+                        <div className="flex items-center">
+                          <img 
+                            src={teamLogo} 
+                            alt={teamName} 
+                            className="w-5 h-5 mr-3"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = '/images/match/team1-copyright.png';
+                            }}
+                          />
+                          {teamName}
+                        </div>
+                      </td>
+                      <td>{played}</td>
+                      <td>{win}</td>
+                      <td>{draw}</td>
+                      <td>{lose}</td>
+                      <td>{goalsFor}-{goalsAgainst}</td>
+                      <td>{goalsDiff >= 0 ? '+' : ''}{goalsDiff}</td>
+                      <td>{points}</td>
+                    </tr>
+                  );
+                })
+              ) : (
+                // Fallback nếu không có data
+                <tr>
+                  <td colSpan={9} className="text-center py-4 text-gray-500">
+                    Không có dữ liệu bảng xếp hạng
                   </td>
-                  <td>3</td>
-                  <td>3</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>13-3</td>
-                  <td>+10</td>
-                  <td>9</td>
-              </tr>
-
-              <tr>
-                  <td>3</td>
-                  <td>
-                    <div className="flex items-center">
-                      <img src="/images/match/team1-copyright.png" alt="National" className="w-5 h-5 mr-3"/>
-                      Anh - Premier League
-                    </div>
-                  </td>
-                  <td>3</td>
-                  <td>3</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>13-3</td>
-                  <td>+10</td>
-                  <td>9</td>
-              </tr>
-
-              <tr>
-                  <td>4</td>
-                  <td>
-                    <div className="flex items-center">
-                      <img src="/images/match/9789_xsmall.png" alt="National" className="w-5 h-5 mr-3"/>
-                      Anh - Premier League
-                    </div>
-                  </td>
-                  <td>3</td>
-                  <td>3</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>13-3</td>
-                  <td>+10</td>
-                  <td>9</td>
-              </tr>
+                </tr>
+              )}
             </tbody>
         </table> 
     </div>
-    
   )
 }

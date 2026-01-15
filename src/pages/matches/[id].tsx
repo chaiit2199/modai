@@ -3,18 +3,20 @@ import Link from 'next/link';
 import { useDevice } from '@/context/DeviceContext';
 import PageTitle from "@/components/PageTitle";
 import Metadata from "@/components/Metadata";
-import { fetchMatchDetail } from "@/api/fetchData";
+import { fetchMatchDetail, fetchNewsLatest } from "@/api/fetchData";
 import { cache } from "@/utils/cache";
 import { CACHE_KEYS } from "@/constants/endpoint";
+import NewsLatest from "@/components/News/NewsLatest";
 
 interface MatchDetailProps {
   matchData: any;
   dataSource: 'cache' | 'api';
   cacheAge: number | null;
   fixtureId: string;
+  newsLatestData: any[];
 }
 
-export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId }: MatchDetailProps) {
+export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId, newsLatestData }: MatchDetailProps) {
   const { isMobile } = useDevice();
 
   if (isMobile == undefined) return null;
@@ -253,7 +255,11 @@ export default function MatchDetail({ matchData, dataSource, cacheAge, fixtureId
         </div>
 
         <div className="nav-content">
-          <h2 className="text-xl font-bold mb-6">Match Details</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold">Tin tức</h2>
+            <Link href="/news" className="hover:underline text-sm">Xem tất cả</Link>
+          </div>
+          <NewsLatest newsLatestData={newsLatestData} />
         </div>
       </div>
     </div>
@@ -297,12 +303,33 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     dataSource = 'cache';
   }
 
+  // Fetch news data - Cache 10 phút
+  const TEN_MINUTES_MS = 10 * 60 * 1000;
+  const newsCacheKey = CACHE_KEYS.NEWS_LATEST();
+  const newsCacheResult = cache.getWithInfo<any[]>(newsCacheKey);
+  let newsLatestData: any[] = [];
+  
+  if (newsCacheResult) {
+    newsLatestData = newsCacheResult.data || [];
+  } else {
+    const result = await fetchNewsLatest();
+    
+    if (result.success && result.data) {
+      const data = result.data;
+      newsLatestData = Array.isArray(data) ? data : [];
+      cache.set(newsCacheKey, newsLatestData, TEN_MINUTES_MS);
+    } else {
+      newsLatestData = [];
+    }
+  }
+
   return {
     props: {
       matchData: matchData || null,
       dataSource,
       cacheAge: cacheAge ?? null, // Use null instead of undefined for JSON serialization
       fixtureId,
+      newsLatestData: newsLatestData || [],
     },
   };
 }

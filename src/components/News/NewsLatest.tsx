@@ -17,9 +17,12 @@ export default function NewsLatest({ newsLatestData }: NewsLatestProps) {
         return <Loading show={true} />;
     }
 
+    // Chỉ hiển thị 10 bài gần nhất
+    const latest10News = validNewsData.slice(0, 10);
+
     return (
         <div className='flex flex-col gap-4'>
-            {validNewsData.map((item, index) => (
+            {latest10News.map((item, index) => (
                 <Post 
                     data={item} 
                     key={item?.id || item?._id || `news-${index}`} 
